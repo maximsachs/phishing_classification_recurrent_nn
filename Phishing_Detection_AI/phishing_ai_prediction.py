@@ -45,7 +45,9 @@ tld_print["OTHERS"] = tld_df.iloc[show_top_n:].sum()
 online_valid_df["domain_names"] = domain_names
 
 
-alexa_whitelist_df = pd.read_csv("top-1m.csv", header=None, names=["rank", "domain_names"])
+whitelist_file_alexa = "top-1m_alexa.csv"
+whitelist_file_umbrella = "top-1m_umbrella.csv"
+alexa_whitelist_df = pd.read_csv(whitelist_file_umbrella, header=None, names=["rank", "domain_names"])
 
 # Finding if there are any domains that are also in the whitelist.
 domains_in_whitelist = np.intersect1d(online_valid_df["domain_names"], alexa_whitelist_df["domain_names"])
