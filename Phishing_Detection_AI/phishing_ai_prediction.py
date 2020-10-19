@@ -166,9 +166,9 @@ print(list(zip(X_test_encoded_padded[:show_top_n], y_test[:show_top_n])))
 
 
 # Creating the recurrent model for the predictions:
-
+print("\n---------------Tensorflow magic------------------\n")
 model = tf.keras.Sequential([
-    tf.keras.layers.Embedding(vocab_size, 32),
+    tf.keras.layers.Embedding(vocab_size, 64),
     # tf.keras.layers.LSTM(32, return_sequences=True),
     tf.keras.layers.LSTM(32),
     tf.keras.layers.Dense(1, activation="sigmoid")
@@ -189,6 +189,7 @@ print(results)
 
 # Making a prediction on a url using the model:
 print()
+show_top_n = 10
 print(f"Predicting the first {show_top_n} examples from the test data:")
 
 first_n_predicitons = model.predict(X_test_encoded_padded[:show_top_n])
@@ -202,9 +203,10 @@ def predict_url(url):
     result = model.predict(encoded_text) 
     print("Prediction on url:", url, result[0][0])
 
-print("Phishing ULR examples:")
+print("\nPhishing ULR examples:")
 predict_url("frgcxtmjzfjpdcusge.top")
 predict_url("evilmadeupurl.phish")
+predict_url("evil.madeupurl.phish")
 
 
 print("\nSafe URL examples:")
@@ -212,9 +214,14 @@ predict_url("sharelatex.cryptobro.eu")
 predict_url("sharelatex.cryptobro.eu:5000")
 
 predict_url("google.com")
+predict_url("www.google.com")
+predict_url("gmail.google.com")
+predict_url("mail.google.com")
 
 predict_url("tudelft.nl")
 
 predict_url("brightspace.tudelft.nl")
 
 predict_url("colab.research.google.com")
+
+predict_url("00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr")
