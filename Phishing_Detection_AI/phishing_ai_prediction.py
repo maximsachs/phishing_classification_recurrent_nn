@@ -10,20 +10,22 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 32
+random_seed = 16
 
 np.random.seed(random_seed)
 
-print(tf.config.list_physical_devices('GPU'))
-# For some reason needed so the code runs properly on the gpu.
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-    print('gpu', gpu)
-    tf.config.experimental.set_memory_growth(gpu, True)
-    print('memory growth:' , tf.config.experimental.get_memory_growth(gpu))
-
 print("Phishtank Online Valid Dataset")
-online_valid_df = pd.read_csv("online-valid.csv")
+
+#Combining multiple online-valid datasets from different days to get more unique samples.
+online_valid_df_1 = pd.read_csv("online-valid_2020-10-08.csv")
+online_valid_df_1.set_index("phish_id", inplace=True)
+online_valid_df_2 = pd.read_csv("online-valid_2020-10-19.csv")
+online_valid_df_2.set_index("phish_id", inplace=True)
+online_valid_df_3 = pd.read_csv("online-valid_2020-10-20.csv")
+online_valid_df_3.set_index("phish_id", inplace=True)
+
+online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
 
 # Extracting tld and domain name.
 tld_count = defaultdict(lambda: 0)
@@ -62,7 +64,7 @@ print(f"Percentage of top {show_top_n} tlds: {np.round(100*tld_df.iloc[:show_top
 
 
 print()
-print("Alexa whitelist top 500k")
+print(whitelist_file_umbrella)
 
 print(alexa_whitelist_df.shape[0], "rows")
 print(alexa_whitelist_df.head(20))
@@ -170,6 +172,15 @@ print(list(zip(X_test_encoded_padded[:show_top_n], y_test[:show_top_n])))
 
 # Creating the recurrent model for the predictions:
 print("\n---------------Tensorflow magic------------------\n")
+# print(tf.config.list_physical_devices('GPU'))
+# For some reason needed so the code runs properly on the gpu.
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    print('gpu', gpu)
+    tf.config.experimental.set_memory_growth(gpu, True)
+    print('memory growth:' , tf.config.experimental.get_memory_growth(gpu))
+
+
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, 64),
     # tf.keras.layers.LSTM(32, return_sequences=True),
@@ -212,13 +223,26 @@ def evaluate_nn_model(X, y, threshold=0.5):
     # Counting the number of times each unique value in the tests is returned.
     unique_elements, counts_elements = np.unique(hypothesis_tests, return_counts=True)
     outcome_labels = ["TN", "FP", "FN", "TP"]
-    print("Evaluation counts:", dict(zip(outcome_labels, counts_elements)))
+    evaluation_ratios_counts = dict(zip(outcome_labels, counts_elements))
+    print("Evaluation counts:", evaluation_ratios_counts)
     evaluation_ratios = dict(zip(outcome_labels, counts_elements/counts_elements.sum()))
     print("Evaluation ratios:", evaluation_ratios)
+    positive_predictive_value = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
+    true_positive_rate = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
+    false_discovery_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
+    false_positive_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["FP"]+evaluation_ratios_counts["TN"])
+    false_omission_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
+    false_negative_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
+    negative_predictive_value = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
+    true_negative_rate = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FP"])
 
     t = PrettyTable(['', 'Is phishing', "Not phishing"])
-    t.add_row(['Predicted phishing', evaluation_ratios["TP"], evaluation_ratios["FP"]])
-    t.add_row(['Predicted safe', evaluation_ratios["FN"], evaluation_ratios["TN"]])
+    t.add_row(['Predicted phishing', "TP: {TP}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=2)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=2)}%"])
+    t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=2)}%", f"FPR: {np.round(false_positive_rate*100, decimals=2)}%"])
+    t.add_row(['Predicted safe', "FN: {FN}".format(**evaluation_ratios_counts), "TN: {TN}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=2)}%", f"NPV: {np.round(negative_predictive_value*100, decimals=2)}%"])
+    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=2)}%", f"TNR: {np.round(true_negative_rate*100, decimals=2)}%"])
     print(t)
     return mean_prediction
     
