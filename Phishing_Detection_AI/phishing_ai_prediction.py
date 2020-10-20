@@ -7,9 +7,10 @@ import urllib.request
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing import sequence
 from tqdm import tqdm
+from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 59
+random_seed = 32
 
 np.random.seed(random_seed)
 
@@ -88,7 +89,7 @@ print("Phishing domains:", phishing_domains, len(phishing_domains))
 print("Benign domains:", whitelist_domains, len(whitelist_domains))
 
 
-vocab = sorted(set("".join(phishing_domains+whitelist_domains)), reverse=True)
+vocab = sorted(set("".join(list(phishing_domains)+list(whitelist_domains))), reverse=True)
 # Inserting a space at index 0, since it is not used in url and will be used for padding the examples.
 vocab.insert(0, " ")
 vocab_size = len(vocab)
@@ -178,15 +179,57 @@ model = tf.keras.Sequential([
 
 
 # Compiling the model
-model.compile(loss="binary_crossentropy", optimizer="rmsprop", metrics=['acc'])
+model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
 print(model.summary())
 
 # Training the model
-history = model.fit(X_train_encoded_padded, y_train, epochs=3, validation_data=(X_test_encoded_padded, y_test))
+history = model.fit(X_train_encoded_padded, y_train, epochs=5, validation_data=(X_test_encoded_padded, y_test))
 
 #Evaluating the model
+
+
+def evaluate_nn_model(X, y, threshold=0.5):
+    """
+    Custom nn evaluation to get the TP, TN, FP, FN rates.
+    Anything below threshold is considered not phishing.
+    Anything above threshold is considered phishing.
+
+    """
+    print()
+    predictions = model.predict(X_test_encoded_padded).flatten()
+    mean_prediction = np.mean(predictions)
+    print(f"Calculated {len(predictions)} predictions with a mean value of {mean_prediction}")
+    print(f"Evaluating using threshold {threshold}")
+    # Turning the predictions into 0 and 1 by checking the threshold. (0 safe, 1 phishing)
+    predictions_boolean = predictions > threshold
+    predictions_binary = predictions_boolean.astype(np.int)
+    # Concattenating the strings of the binary value of the prediction and the truth.
+    # First value is the prediction, second the actual label
+    # Hypothesis is: is phishing -> positive: yes phishing, negative: no phishing
+    # Then 00 would be a TN, 01 is a FP, 10 is a FN, 11 is a TP. 
+    # Converting the binary outcomes to integer: 0 TN, 1 FP, 2 FN, 3 TP
+    hypothesis_tests = [int(str(prediction)+str(label), 2) for prediction, label in zip(predictions_binary, y)]
+    # Counting the number of times each unique value in the tests is returned.
+    unique_elements, counts_elements = np.unique(hypothesis_tests, return_counts=True)
+    outcome_labels = ["TN", "FP", "FN", "TP"]
+    print("Evaluation counts:", dict(zip(outcome_labels, counts_elements)))
+    evaluation_ratios = dict(zip(outcome_labels, counts_elements/counts_elements.sum()))
+    print("Evaluation ratios:", evaluation_ratios)
+
+    t = PrettyTable(['', 'Is phishing', "Not phishing"])
+    t.add_row(['Predicted phishing', evaluation_ratios["TP"], evaluation_ratios["FP"]])
+    t.add_row(['Predicted safe', evaluation_ratios["FN"], evaluation_ratios["TN"]])
+    print(t)
+    return mean_prediction
+    
+
+    
+
 results = model.evaluate(X_test_encoded_padded, y_test)
 print(results)
+
+mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=0.5)
+mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=mean_prediction)
 
 
 # Making a prediction on a url using the model:
@@ -194,10 +237,10 @@ print()
 show_top_n = 10
 print(f"Predicting the first {show_top_n} examples from the test data:")
 
-first_n_predicitons = model.predict(X_test_encoded_padded[:show_top_n])
-print(first_n_predicitons.flatten())
+first_n_predictions = model.predict(X_test_encoded_padded[:show_top_n])
+print(first_n_predictions.flatten())
 
-prediction_df = pd.DataFrame(data={"domain_names": X_test[:show_top_n], "predicitons": first_n_predicitons.flatten(), "truth": y_test[:show_top_n]})
+prediction_df = pd.DataFrame(data={"domain_names": X_test[:show_top_n], "predictions": first_n_predictions.flatten(), "truth": y_test[:show_top_n]})
 print(prediction_df)
 
 def predict_url(url):
