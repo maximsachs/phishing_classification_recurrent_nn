@@ -10,7 +10,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 16
+random_seed = 17
 
 np.random.seed(random_seed)
 
@@ -23,9 +23,12 @@ online_valid_df_2 = pd.read_csv("online-valid_2020-10-19.csv")
 online_valid_df_2.set_index("phish_id", inplace=True)
 online_valid_df_3 = pd.read_csv("online-valid_2020-10-20.csv")
 online_valid_df_3.set_index("phish_id", inplace=True)
+online_valid_df_4 = pd.read_csv("online-valid_2020-10-21.csv")
+online_valid_df_4.set_index("phish_id", inplace=True)
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_4, how="outer")
 
 # Extracting tld and domain name.
 tld_count = defaultdict(lambda: 0)
@@ -79,7 +82,7 @@ online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_w
 alexa_whitelist_df_without_intersection = alexa_whitelist_df.loc[np.invert(alexa_whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
-whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=len(phishing_domains))
+whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=len(phishing_domains), replace=False)
 
 # Calling a phishing url 1 and a benign url 0.
 # Using character encoding as the vocabulary.
@@ -180,11 +183,22 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
     print('memory growth:' , tf.config.experimental.get_memory_growth(gpu))
 
-
+# https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, 64),
-    # tf.keras.layers.LSTM(32, return_sequences=True),
-    tf.keras.layers.LSTM(32),
+    # tf.keras.layers.LSTM(512, return_sequences=True),
+    tf.keras.layers.LSTM(512),
+    # tf.keras.layers.LSTM(128, go_backwards=True),
+    # tf.keras.layers.Dense(512),
+    # tf.keras.layers.Dense(128,activation="tanh"),
+    # tf.keras.layers.Dense(128),
+    tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(32,activation="sigmoid"),
+    # tf.keras.layers.Dense(32),
+    # tf.keras.layers.Dense(16),
     tf.keras.layers.Dense(1, activation="sigmoid")
 ])
 
@@ -194,7 +208,7 @@ model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
 print(model.summary())
 
 # Training the model
-history = model.fit(X_train_encoded_padded, y_train, epochs=5, validation_data=(X_test_encoded_padded, y_test))
+history = model.fit(X_train_encoded_padded, y_train, epochs=9, validation_data=(X_test_encoded_padded, y_test))
 
 #Evaluating the model
 
@@ -214,6 +228,7 @@ def evaluate_nn_model(X, y, threshold=0.5):
     # Turning the predictions into 0 and 1 by checking the threshold. (0 safe, 1 phishing)
     predictions_boolean = predictions > threshold
     predictions_binary = predictions_boolean.astype(np.int)
+
     # Concattenating the strings of the binary value of the prediction and the truth.
     # First value is the prediction, second the actual label
     # Hypothesis is: is phishing -> positive: yes phishing, negative: no phishing
@@ -222,11 +237,10 @@ def evaluate_nn_model(X, y, threshold=0.5):
     hypothesis_tests = [int(str(prediction)+str(label), 2) for prediction, label in zip(predictions_binary, y)]
     # Counting the number of times each unique value in the tests is returned.
     unique_elements, counts_elements = np.unique(hypothesis_tests, return_counts=True)
+    counts_elements = dict(zip(unique_elements, counts_elements))
     outcome_labels = ["TN", "FP", "FN", "TP"]
-    evaluation_ratios_counts = dict(zip(outcome_labels, counts_elements))
+    evaluation_ratios_counts = dict(zip(outcome_labels, [counts_elements.get(0, 0), counts_elements.get(1, 0), counts_elements.get(2, 0), counts_elements.get(3, 0)]))
     print("Evaluation counts:", evaluation_ratios_counts)
-    evaluation_ratios = dict(zip(outcome_labels, counts_elements/counts_elements.sum()))
-    print("Evaluation ratios:", evaluation_ratios)
     positive_predictive_value = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
     true_positive_rate = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
     false_discovery_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
@@ -236,7 +250,7 @@ def evaluate_nn_model(X, y, threshold=0.5):
     negative_predictive_value = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
     true_negative_rate = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FP"])
 
-    t = PrettyTable(['', 'Is phishing', "Not phishing"])
+    t = PrettyTable([f"Cut-off: {np.round(threshold, decimals=4)}", 'Is phishing', "Not phishing"])
     t.add_row(['Predicted phishing', "TP: {TP}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
     t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=2)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=2)}%"])
     t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=2)}%", f"FPR: {np.round(false_positive_rate*100, decimals=2)}%"])
