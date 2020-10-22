@@ -10,7 +10,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 17
+random_seed = 18
 
 np.random.seed(random_seed)
 
@@ -25,10 +25,21 @@ online_valid_df_3 = pd.read_csv("online-valid_2020-10-20.csv")
 online_valid_df_3.set_index("phish_id", inplace=True)
 online_valid_df_4 = pd.read_csv("online-valid_2020-10-21.csv")
 online_valid_df_4.set_index("phish_id", inplace=True)
+online_valid_df_5 = pd.read_csv("online-valid_2020-10-21_2.csv")
+online_valid_df_5.set_index("phish_id", inplace=True)
+online_valid_df_6 = pd.read_csv("online-valid_2020-10-22_1.csv")
+online_valid_df_6.set_index("phish_id", inplace=True)
+online_valid_df_7 = pd.read_csv("online-valid_2020-10-22_2.csv")
+online_valid_df_7.set_index("phish_id", inplace=True)
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_4, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_5, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_6, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_7, how="outer")
+
+online_valid_df.to_csv("combined_online_valid.csv")
 
 # Extracting tld and domain name.
 tld_count = defaultdict(lambda: 0)
@@ -81,8 +92,10 @@ print("Number of urls that have domains which are in the whilelist:", online_val
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
 alexa_whitelist_df_without_intersection = alexa_whitelist_df.loc[np.invert(alexa_whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
+oversampling_rate = 1 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
-whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=len(phishing_domains), replace=False)
+whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
 
 # Calling a phishing url 1 and a benign url 0.
 # Using character encoding as the vocabulary.
@@ -125,6 +138,7 @@ print(int_to_text(text_to_int(phishing_domains[0])))
 print()
 X = list(phishing_domains) + list(whitelist_domains)
 y = [1]*len(phishing_domains) + [0]*len(whitelist_domains)
+sample_weights = [1]*len(phishing_domains) + [1/oversampling_rate]*len(whitelist_domains)
 
 # Investigating the domain name length for the combined domain names:
 X_elem_len = [len(domain_name) for domain_name in X]
@@ -141,14 +155,14 @@ print((np.array(X_elem_len) > max_seq_len).sum(), "URLs longer than the cutoff l
 # Creating test and training datasets
 print()
 
-X_train, X_test, y_train, y_test = train_test_split(np.array(X), np.array(y), test_size=0.15, random_state=random_seed)
+X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(np.array(X), np.array(y), np.array(sample_weights), test_size=0.15, random_state=random_seed)
 
 show_top_n = 5
 print(f"Training and testing data: (showing first {show_top_n})")
 print(f"Train data {len(X_train)} samples")
-print(list(zip(X_train[:show_top_n], y_train[:show_top_n])))
+print(list(zip(X_train[:show_top_n], y_train[:show_top_n], sample_weights_train[:show_top_n])))
 print(f"Test data {len(X_test)} samples")
-print(list(zip(X_test[:show_top_n], y_test[:show_top_n])))
+print(list(zip(X_test[:show_top_n], y_test[:show_top_n], sample_weights_test[:show_top_n])))
 
 # Encoding the domain names using the vocabulary
 
@@ -208,7 +222,7 @@ model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
 print(model.summary())
 
 # Training the model
-history = model.fit(X_train_encoded_padded, y_train, epochs=9, validation_data=(X_test_encoded_padded, y_test))
+history = model.fit(X_train_encoded_padded, y_train, epochs=10, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train)
 
 #Evaluating the model
 
@@ -268,6 +282,7 @@ print(results)
 
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=0.5)
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=mean_prediction)
+evaluate_nn_model(X_test_encoded_padded, y_test, threshold=1-(1/(oversampling_rate+1)))
 
 
 # Making a prediction on a url using the model:
