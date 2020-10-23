@@ -31,6 +31,8 @@ online_valid_df_6 = pd.read_csv("online-valid_2020-10-22_1.csv")
 online_valid_df_6.set_index("phish_id", inplace=True)
 online_valid_df_7 = pd.read_csv("online-valid_2020-10-22_2.csv")
 online_valid_df_7.set_index("phish_id", inplace=True)
+online_valid_df_8 = pd.read_csv("online-valid_2020-10-23_1.csv")
+online_valid_df_8.set_index("phish_id", inplace=True)
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
@@ -38,6 +40,7 @@ online_valid_df = online_valid_df.merge(online_valid_df_4, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_5, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_6, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_7, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_8, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -106,8 +109,14 @@ print("Selected Data Examples:")
 print("Phishing domains:", phishing_domains, len(phishing_domains))
 print("Benign domains:", whitelist_domains, len(whitelist_domains))
 
+# Creating the samples array and the label array
+print()
+X = list(phishing_domains) + list(whitelist_domains)
+y = [1]*len(phishing_domains) + [0]*len(whitelist_domains)
+sample_weights = [1]*len(phishing_domains) + [1/oversampling_rate]*len(whitelist_domains)
 
-vocab = sorted(set("".join(list(phishing_domains)+list(whitelist_domains))), reverse=True)
+
+vocab = sorted(set("".join(X)), reverse=True)
 # Inserting a space at index 0, since it is not used in url and will be used for padding the examples.
 vocab.insert(0, " ")
 vocab_size = len(vocab)
@@ -134,11 +143,6 @@ def int_to_text(ints):
 
 print(int_to_text(text_to_int(phishing_domains[0])))
 
-# Creating the samples array and the label array
-print()
-X = list(phishing_domains) + list(whitelist_domains)
-y = [1]*len(phishing_domains) + [0]*len(whitelist_domains)
-sample_weights = [1]*len(phishing_domains) + [1/oversampling_rate]*len(whitelist_domains)
 
 # Investigating the domain name length for the combined domain names:
 X_elem_len = [len(domain_name) for domain_name in X]
@@ -242,38 +246,64 @@ def evaluate_nn_model(X, y, threshold=0.5):
     # Turning the predictions into 0 and 1 by checking the threshold. (0 safe, 1 phishing)
     predictions_boolean = predictions > threshold
     predictions_binary = predictions_boolean.astype(np.int)
+    print(f"Cut-off threshold: {np.round(threshold, decimals=4)}")
+    statistics_table_printer(predictions_binary, y)
+    return mean_prediction
 
+def statistics_table_printer(predictions_binary, y_binary, decimals=3):
     # Concattenating the strings of the binary value of the prediction and the truth.
     # First value is the prediction, second the actual label
     # Hypothesis is: is phishing -> positive: yes phishing, negative: no phishing
     # Then 00 would be a TN, 01 is a FP, 10 is a FN, 11 is a TP. 
     # Converting the binary outcomes to integer: 0 TN, 1 FP, 2 FN, 3 TP
-    hypothesis_tests = [int(str(prediction)+str(label), 2) for prediction, label in zip(predictions_binary, y)]
+    hypothesis_tests = [int(str(label)+str(prediction), 2) for prediction, label in zip(predictions_binary, y_binary)]
     # Counting the number of times each unique value in the tests is returned.
     unique_elements, counts_elements = np.unique(hypothesis_tests, return_counts=True)
     counts_elements = dict(zip(unique_elements, counts_elements))
     outcome_labels = ["TN", "FP", "FN", "TP"]
     evaluation_ratios_counts = dict(zip(outcome_labels, [counts_elements.get(0, 0), counts_elements.get(1, 0), counts_elements.get(2, 0), counts_elements.get(3, 0)]))
     print("Evaluation counts:", evaluation_ratios_counts)
-    positive_predictive_value = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
-    true_positive_rate = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
-    false_discovery_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
-    false_positive_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["FP"]+evaluation_ratios_counts["TN"])
-    false_omission_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
-    false_negative_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
-    negative_predictive_value = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
-    true_negative_rate = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FP"])
+    try:
+        positive_predictive_value = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
+    except:
+        positive_predictive_value = 0
+    try:
+        true_positive_rate = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
+    except:
+        true_positive_rate = 0
+    try:
+        false_discovery_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
+    except:
+        false_discovery_rate = 0
+    try:
+        false_positive_rate = evaluation_ratios_counts["FP"]/(evaluation_ratios_counts["FP"]+evaluation_ratios_counts["TN"])
+    except:
+        false_positive_rate = 0
+    try:
+        false_omission_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
+    except:
+        false_omission_rate = 0
+    try:
+        false_negative_rate = evaluation_ratios_counts["FN"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FN"])
+    except:
+        false_negative_rate = 0
+    try:
+        negative_predictive_value = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FN"])
+    except:
+        negative_predictive_value = 0
+    try:
+        true_negative_rate = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FP"])
+    except:
+        true_negative_rate = 0
 
-    t = PrettyTable([f"Cut-off: {np.round(threshold, decimals=4)}", 'Is phishing', "Not phishing"])
+    t = PrettyTable(["", 'Is phishing', "Not phishing"])
     t.add_row(['Predicted phishing', "TP: {TP}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=2)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=2)}%"])
-    t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=2)}%", f"FPR: {np.round(false_positive_rate*100, decimals=2)}%"])
+    t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
+    t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%", f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
     t.add_row(['Predicted safe', "FN: {FN}".format(**evaluation_ratios_counts), "TN: {TN}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=2)}%", f"NPV: {np.round(negative_predictive_value*100, decimals=2)}%"])
-    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=2)}%", f"TNR: {np.round(true_negative_rate*100, decimals=2)}%"])
+    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%", f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%"])
+    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%"])
     print(t)
-    return mean_prediction
-    
 
     
 
