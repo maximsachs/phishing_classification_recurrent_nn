@@ -35,6 +35,8 @@ online_valid_df_8 = pd.read_csv("online-valid_2020-10-23_1.csv")
 online_valid_df_8.set_index("phish_id", inplace=True)
 online_valid_df_9 = pd.read_csv("online-valid_2020-10-24.csv")
 online_valid_df_9.set_index("phish_id", inplace=True)
+online_valid_df_10 = pd.read_csv("online-valid_2020-10-24_2.csv")
+online_valid_df_10.set_index("phish_id", inplace=True)
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
@@ -44,6 +46,7 @@ online_valid_df = online_valid_df.merge(online_valid_df_6, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_7, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_8, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_9, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_10, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
