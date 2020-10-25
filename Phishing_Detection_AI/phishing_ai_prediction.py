@@ -10,7 +10,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 16
+random_seed = 18
 
 np.random.seed(random_seed)
 
@@ -41,6 +41,8 @@ online_valid_df_11 = pd.read_csv("online-valid_2020-10-24_3.csv")
 online_valid_df_11.set_index("phish_id", inplace=True)
 online_valid_df_12 = pd.read_csv("online-valid_2020-10-25_1.csv")
 online_valid_df_12.set_index("phish_id", inplace=True)
+online_valid_df_13 = pd.read_csv("online-valid_2020-10-25_2.csv")
+online_valid_df_13.set_index("phish_id", inplace=True)
 
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
@@ -54,6 +56,7 @@ online_valid_df = online_valid_df.merge(online_valid_df_9, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_10, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_11, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_12, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_13, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -254,7 +257,7 @@ def evaluate_nn_model(X, y, threshold=0.5):
 
     """
     print()
-    predictions = model.predict(X_test_encoded_padded).flatten()
+    predictions = model.predict(X).flatten()
     mean_prediction = np.mean(predictions)
     print(f"Calculated {len(predictions)} predictions with a mean value of {mean_prediction}")
     print(f"Evaluating using threshold {threshold}")
@@ -265,7 +268,7 @@ def evaluate_nn_model(X, y, threshold=0.5):
     statistics_table_printer(predictions_binary, y)
     return mean_prediction
 
-def statistics_table_printer(predictions_binary, y_binary, decimals=3):
+def statistics_evaluator(predictions_binary, y_binary):
     # Concattenating the strings of the binary value of the prediction and the truth.
     # First value is the prediction, second the actual label
     # Hypothesis is: is phishing -> positive: yes phishing, negative: no phishing
@@ -277,6 +280,10 @@ def statistics_table_printer(predictions_binary, y_binary, decimals=3):
     counts_elements = dict(zip(unique_elements, counts_elements))
     outcome_labels = ["TN", "FP", "FN", "TP"]
     evaluation_ratios_counts = dict(zip(outcome_labels, [counts_elements.get(0, 0), counts_elements.get(1, 0), counts_elements.get(2, 0), counts_elements.get(3, 0)]))
+    return evaluation_ratios_counts
+
+def statistics_table_printer(predictions_binary, y_binary, decimals=3):
+    evaluation_ratios_counts = statistics_evaluator(predictions_binary, y_binary)
     print("Evaluation counts:", evaluation_ratios_counts)
     try:
         positive_predictive_value = evaluation_ratios_counts["TP"]/(evaluation_ratios_counts["TP"]+evaluation_ratios_counts["FP"])
@@ -324,7 +331,41 @@ def statistics_table_printer(predictions_binary, y_binary, decimals=3):
     t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%"])
     print(t)
 
-    
+def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, steps=200, decimals=3):
+    predictions = model.predict(X).flatten()
+    stat_counts = []
+    # Sweeping over the ranges.
+    for threshold in np.linspace(min_threshold, max_threshold, steps):
+        predictions_boolean = predictions > threshold
+        predictions_binary = predictions_boolean.astype(np.int)
+        evaluation_ratios_counts = statistics_evaluator(predictions_binary, y)
+        stat_counts.append(evaluation_ratios_counts)
+    counts_df = pd.DataFrame(data=stat_counts, index=np.linspace(min_threshold, max_threshold, steps))
+    stat_df = pd.DataFrame(index=np.linspace(min_threshold, max_threshold, steps))
+    # Calculating the stats:
+    stat_df["accuracy"] = (counts_df["TP"]+counts_df["TN"])/(counts_df["TP"]+counts_df["TN"]+counts_df["FP"]+counts_df["FN"])
+    stat_df["PPV"] = counts_df["TP"]/(counts_df["TP"]+counts_df["FP"])
+    stat_df["TPR"] = counts_df["TP"]/(counts_df["TP"]+counts_df["FN"])
+    stat_df["FDR"] = counts_df["FP"]/(counts_df["TP"]+counts_df["FP"])
+    stat_df["FPR"] = counts_df["FP"]/(counts_df["FP"]+counts_df["TN"])
+    stat_df["FOR"] = counts_df["FN"]/(counts_df["TN"]+counts_df["FN"])
+    stat_df["FNR"] = counts_df["FN"]/(counts_df["TP"]+counts_df["FN"])
+    stat_df["NPV"] = counts_df["TN"]/(counts_df["TN"]+counts_df["FN"])
+    stat_df["TNR"] = counts_df["TN"]/(counts_df["FP"]+counts_df["TN"])
+    # print(stat_df)
+    fig = stat_df.plot(kind='line',  figsize=(20, 7), fontsize=16).get_figure()
+    plt.tight_layout()
+    plt.grid()
+    fig.savefig('threshold_statistics_sweep.pdf')
+    print("Best performance at threshold:", stat_df['accuracy'].idxmax())
+    best_performance = stat_df.loc[stat_df['accuracy'].idxmax()]
+    t = PrettyTable(["Accuracy "+str(np.round(best_performance["accuracy"]*100, decimals=decimals))+"%", "Is phishing", "Not phishing"])
+    t.add_row(['Predicted phishing', f"PPV: "+str(np.round(best_performance["PPV"]*100, decimals=decimals))+"%", f"FDR: "+str(np.round(best_performance["FDR"]*100, decimals=decimals))+"%"])
+    t.add_row(['', f"TPR: "+str(np.round(best_performance["TPR"]*100, decimals=decimals))+"%", f"FPR: "+str(np.round(best_performance["FPR"]*100, decimals=decimals))+"%"])
+    t.add_row(['Predicted safe', f"FOR: "+str(np.round(best_performance["FOR"]*100, decimals=decimals))+"%", f"NPV: "+str(np.round(best_performance["NPV"]*100, decimals=decimals))+"%"])
+    t.add_row(['', f"FNR: "+str(np.round(best_performance["FNR"]*100, decimals=decimals))+"%", f"TNR: "+str(np.round(best_performance["TNR"]*100, decimals=decimals))+"%"])
+    print(t)
+
 
 results = model.evaluate(X_test_encoded_padded, y_test)
 print(results)
@@ -332,7 +373,8 @@ print(results)
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=0.5)
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=mean_prediction)
 evaluate_nn_model(X_test_encoded_padded, y_test, threshold=1-(1/(oversampling_rate+1)))
-
+mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=0.9)
+threshold_evaluation_plotter(X_test_encoded_padded, y_test)
 
 # Making a prediction on a url using the model:
 print()
