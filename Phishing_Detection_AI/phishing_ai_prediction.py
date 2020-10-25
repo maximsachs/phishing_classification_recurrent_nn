@@ -10,7 +10,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
-random_seed = 18
+random_seed = 16
 
 np.random.seed(random_seed)
 
@@ -37,6 +37,11 @@ online_valid_df_9 = pd.read_csv("online-valid_2020-10-24.csv")
 online_valid_df_9.set_index("phish_id", inplace=True)
 online_valid_df_10 = pd.read_csv("online-valid_2020-10-24_2.csv")
 online_valid_df_10.set_index("phish_id", inplace=True)
+online_valid_df_11 = pd.read_csv("online-valid_2020-10-24_3.csv")
+online_valid_df_11.set_index("phish_id", inplace=True)
+online_valid_df_12 = pd.read_csv("online-valid_2020-10-25_1.csv")
+online_valid_df_12.set_index("phish_id", inplace=True)
+
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
@@ -47,6 +52,8 @@ online_valid_df = online_valid_df.merge(online_valid_df_7, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_8, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_9, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_10, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_11, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_12, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -112,6 +119,8 @@ whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["do
 
 print()
 print("Selected Data Examples:")
+# print(online_valid_df_without_intersection[["url", "domain_names"]].head(7).to_latex(escape=True))
+# raise
 print("Phishing domains:", phishing_domains, len(phishing_domains))
 print("Benign domains:", whitelist_domains, len(whitelist_domains))
 
@@ -301,8 +310,12 @@ def statistics_table_printer(predictions_binary, y_binary, decimals=3):
         true_negative_rate = evaluation_ratios_counts["TN"]/(evaluation_ratios_counts["TN"]+evaluation_ratios_counts["FP"])
     except:
         true_negative_rate = 0
+    try:
+        accuracy = (evaluation_ratios_counts.get("TP",0)+evaluation_ratios_counts.get("TN",0))/(evaluation_ratios_counts.get("TP",0)+evaluation_ratios_counts.get("TN",0) + evaluation_ratios_counts.get("FP",0) + evaluation_ratios_counts.get("FN",0))
+    except:
+        accuracy = 0
 
-    t = PrettyTable(["", 'Is phishing', "Not phishing"])
+    t = PrettyTable([f"Accuracy {np.round(accuracy*100, decimals=decimals)}%", "Is phishing", "Not phishing"])
     t.add_row(['Predicted phishing', "TP: {TP}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
     t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
     t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%", f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
