@@ -57,6 +57,10 @@ online_valid_df_19 = pd.read_csv("online-valid_2020-10-27_2.csv")
 online_valid_df_19.set_index("phish_id", inplace=True)
 online_valid_df_20 = pd.read_csv("online-valid_2020-10-27_3.csv")
 online_valid_df_20.set_index("phish_id", inplace=True)
+online_valid_df_21 = pd.read_csv("online-valid_2020-10-28_1.csv")
+online_valid_df_21.set_index("phish_id", inplace=True)
+online_valid_df_22 = pd.read_csv("online-valid_2020-10-28_2.csv")
+online_valid_df_22.set_index("phish_id", inplace=True)
 
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
@@ -78,6 +82,8 @@ online_valid_df = online_valid_df.merge(online_valid_df_17, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_18, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_19, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_20, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_21, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_22, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -132,7 +138,7 @@ print("Number of urls that have domains which are in the whilelist:", online_val
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
 alexa_whitelist_df_without_intersection = alexa_whitelist_df.loc[np.invert(alexa_whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
-oversampling_rate = 1.25 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+oversampling_rate = 1 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
 
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
 whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
@@ -268,7 +274,7 @@ print("Using the class weighting:", class_weight)
 # Training the model
 # Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
 # After stopping training will restore the weights from the best iteration on this value encountered so far.
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
+early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=4, restore_best_weights=True)
 # history = model.fit(X_train_encoded_padded, y_train, epochs=100, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train, callbacks=[early_stopping_callback])
 history = model.fit(X_train_encoded_padded, y_train,
                     epochs=100,
@@ -277,17 +283,13 @@ history = model.fit(X_train_encoded_padded, y_train,
                     sample_weight=sample_weights_train,
                     callbacks=[early_stopping_callback])
 
-
 #Evaluating the model
-
-def evaluate_nn_model(X, y, threshold=0.5, examples_per_outcome=20):
+def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
     """
     Custom nn evaluation to get the TP, TN, FP, FN rates.
     Anything below threshold is considered not phishing.
     Anything above threshold is considered phishing.
-
     """
-    print()
     predictions = model.predict(X).flatten()
     mean_prediction = np.mean(predictions)
     print(f"Calculated {len(predictions)} predictions with a mean value of {mean_prediction}")
@@ -299,19 +301,40 @@ def evaluate_nn_model(X, y, threshold=0.5, examples_per_outcome=20):
     evaluation_ratios_counts, sample_outcomes = statistics_evaluator(predictions_binary, y)
     statistics_table_printer(evaluation_ratios_counts)
     # showing some examples for each type of outcome: 0 TN, 1 FP, 2 FN, 3 TP
+    fig, axs = plt.subplots(2, 2, figsize=(15, 8))
     outcome_index = [0, 1, 2, 3]
     outcome_labels = ["TN", "FP", "FN", "TP"]
+    y_axis_max = 0
     for outcome in outcome_index:
-        print("\nExamples for", outcome_labels[outcome])
         outcome_indexes = np.where(np.array(sample_outcomes) == outcome)[0]
-        # Randomly sample some examples from this outcome:
-        chosen_outcome_examples = np.random.choice(outcome_indexes, size=examples_per_outcome, replace=False)
-        example_truth = y[chosen_outcome_examples]
-        example_input_encoded = X[chosen_outcome_examples]
-        example_input_decoded = [ int_to_text(example).strip() for example in example_input_encoded]
-        example_prediction = predictions[chosen_outcome_examples]
-        example_df = pd.DataFrame(data={"input": example_input_decoded, "ground truth": example_truth, "prediction": example_prediction})
-        print(example_df.to_string())
+        # Instead of random samples, do a histogram with bins of the predictions for this outcome.
+        # Then sample examples from each bin.
+        outcome_predictions = predictions[outcome_indexes]
+        outcome_binary = [ int(ind) for ind in list(str(bin(outcome)).replace("0b","").rjust(2, "0"))]
+        outcome_hist, outcome_bins, outcome_patches = axs[outcome_binary[0], outcome_binary[1]].hist(outcome_predictions, bins=bins)
+        y_axis_max = max( max(outcome_hist), y_axis_max)
+        axs[outcome_binary[0], outcome_binary[1]].set_title(outcome_labels[outcome])
+        # Randomly sample some examples from each bin for this outcome:
+        for bin_start, bin_end in zip(outcome_bins[:-1], outcome_bins[1:]):
+            bin_outcome_indexes = np.where( np.logical_and( np.array(outcome_predictions) >= bin_start, np.array(outcome_predictions) < bin_end ))[0]
+            bin_outcome_indexes = outcome_indexes[bin_outcome_indexes]
+            chosen_bin_outcome_examples = np.random.choice(bin_outcome_indexes, size=examples_per_bin, replace=False)
+            example_truth = y[chosen_bin_outcome_examples]
+            example_input_encoded = X[chosen_bin_outcome_examples]
+            example_input_decoded = [ int_to_text(example).strip() for example in example_input_encoded]
+            example_prediction = predictions[chosen_bin_outcome_examples]
+            example_df = pd.DataFrame(data={"input": example_input_decoded, "ground truth": example_truth, "prediction": example_prediction})
+            print("\nExamples for", outcome_labels[outcome], "Bin range:", bin_start, bin_end)
+            print(example_df.to_string())
+    for ax in axs.flat:
+        ax.set(xlabel='Prediction', ylabel='Counts')
+        ax.set_ylim(0, y_axis_max*1.02)
+        ax.grid()
+    # Hide x labels and tick labels for top plots and y ticks for right plots.
+    # for ax in axs.flat:
+    #     ax.label_outer()
+    plt.tight_layout()
+    fig.savefig('outcome_distributions.pdf')
     return mean_prediction
 
 def statistics_evaluator(predictions_binary, y_binary):
@@ -375,9 +398,6 @@ def statistics_table_printer(evaluation_ratios_counts, decimals=3):
     t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%", f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%"])
     t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%"])
     print(t)
-    
-
-
 
 def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, steps=200, decimals=3):
     predictions = model.predict(X).flatten()
@@ -402,7 +422,7 @@ def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, s
     stat_df["TNR"] = counts_df["TN"]/(counts_df["FP"]+counts_df["TN"])
     # print(stat_df)
     fig = stat_df.plot(kind='line',  figsize=(20, 7), fontsize=16, lw=3).get_figure()
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.grid()
     fig.savefig('threshold_statistics_sweep.pdf')
     print("Best performance at threshold:", stat_df['accuracy'].idxmax())
@@ -424,15 +444,15 @@ best_threshold = threshold_evaluation_plotter(X_test_encoded_padded, y_test)
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
 
 # Making a prediction on a url using the model:
-print()
-show_top_n = 10
-print(f"Predicting the first {show_top_n} examples from the test data:")
+# print()
+# show_top_n = 10
+# print(f"Predicting the first {show_top_n} examples from the test data:")
 
-first_n_predictions = model.predict(X_test_encoded_padded[:show_top_n])
-print(first_n_predictions.flatten())
+# first_n_predictions = model.predict(X_test_encoded_padded[:show_top_n])
+# print(first_n_predictions.flatten())
 
-prediction_df = pd.DataFrame(data={"domain_names": X_test[:show_top_n], "predictions": first_n_predictions.flatten(), "truth": y_test[:show_top_n]})
-print(prediction_df)
+# prediction_df = pd.DataFrame(data={"domain_names": X_test[:show_top_n], "predictions": first_n_predictions.flatten(), "truth": y_test[:show_top_n]})
+# print(prediction_df)
 
 def predict_url(url):
     encoded_text = sequence.pad_sequences([text_to_int(url)], max_seq_len)
