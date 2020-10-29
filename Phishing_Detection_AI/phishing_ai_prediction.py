@@ -61,6 +61,10 @@ online_valid_df_21 = pd.read_csv("online-valid_2020-10-28_1.csv")
 online_valid_df_21.set_index("phish_id", inplace=True)
 online_valid_df_22 = pd.read_csv("online-valid_2020-10-28_2.csv")
 online_valid_df_22.set_index("phish_id", inplace=True)
+online_valid_df_23 = pd.read_csv("online-valid_2020-10-28_3.csv")
+online_valid_df_23.set_index("phish_id", inplace=True)
+online_valid_df_24 = pd.read_csv("online-valid_2020-10-29_1.csv")
+online_valid_df_24.set_index("phish_id", inplace=True)
 
 
 online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
@@ -84,6 +88,9 @@ online_valid_df = online_valid_df.merge(online_valid_df_19, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_20, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_21, how="outer")
 online_valid_df = online_valid_df.merge(online_valid_df_22, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_23, how="outer")
+online_valid_df = online_valid_df.merge(online_valid_df_24, how="outer")
+
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -250,12 +257,12 @@ for gpu in gpus:
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, 64),
     # tf.keras.layers.LSTM(512, return_sequences=True),
-    tf.keras.layers.LSTM(64),
+    tf.keras.layers.LSTM(128),
     # tf.keras.layers.LSTM(128, go_backwards=True),
     # tf.keras.layers.Dense(512),
     # tf.keras.layers.Dense(128,activation="tanh"),
     # tf.keras.layers.Dense(128),
-    tf.keras.layers.Dense(64,activation="tanh"),
+    tf.keras.layers.Dense(128,activation="tanh"),
     # tf.keras.layers.Dense(512,activation="tanh"),
     # tf.keras.layers.Dense(512,activation="tanh"),
     # tf.keras.layers.Dense(512,activation="tanh"),
@@ -284,7 +291,7 @@ history = model.fit(X_train_encoded_padded, y_train,
                     callbacks=[early_stopping_callback])
 
 #Evaluating the model
-def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
+def evaluate_nn_model(X, y, threshold=0.5, bins=5, graph_bins=15, examples_per_bin=15):
     """
     Custom nn evaluation to get the TP, TN, FP, FN rates.
     Anything below threshold is considered not phishing.
@@ -298,11 +305,14 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
     predictions_boolean = predictions > threshold
     predictions_binary = predictions_boolean.astype(np.int)
     print(f"Cut-off threshold: {np.round(threshold, decimals=4)}")
+    groundtruth_elements, groundtruth_counts = np.unique(y, return_counts=True)
+    groundtruth_counts = dict(zip(groundtruth_elements, groundtruth_counts))
     evaluation_ratios_counts, sample_outcomes = statistics_evaluator(predictions_binary, y)
     statistics_table_printer(evaluation_ratios_counts)
     # showing some examples for each type of outcome: 0 TN, 1 FP, 2 FN, 3 TP
     fig, axs = plt.subplots(2, 2, figsize=(15, 8))
     outcome_index = [0, 1, 2, 3]
+    outcome_plot_positions = [0, 1, 2, 3]
     outcome_labels = ["TN", "FP", "FN", "TP"]
     y_axis_max = 0
     for outcome in outcome_index:
@@ -310,9 +320,13 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
         # Instead of random samples, do a histogram with bins of the predictions for this outcome.
         # Then sample examples from each bin.
         outcome_predictions = predictions[outcome_indexes]
-        outcome_binary = [ int(ind) for ind in list(str(bin(outcome)).replace("0b","").rjust(2, "0"))]
-        outcome_hist, outcome_bins, outcome_patches = axs[outcome_binary[0], outcome_binary[1]].hist(outcome_predictions, bins=bins)
-        y_axis_max = max( max(outcome_hist), y_axis_max)
+        outcome_binary = [ int(ind) for ind in list(str(bin(outcome_plot_positions[outcome])).replace("0b","").rjust(2, "0"))]
+        outcome_hist, outcome_bins = np.histogram(outcome_predictions, bins=bins)
+        plot_hist, plot_bins = np.histogram(outcome_predictions, bins=graph_bins)
+        outcome_total_count = groundtruth_counts[outcome_binary[0]]
+        plot_hist = (100*np.array(plot_hist))/outcome_total_count
+        axs[outcome_binary[0], outcome_binary[1]].bar(plot_bins[:-1], plot_hist, width = plot_bins[1]-plot_bins[0], align="edge")
+        y_axis_max = max( max(plot_hist), y_axis_max)
         axs[outcome_binary[0], outcome_binary[1]].set_title(outcome_labels[outcome])
         # Randomly sample some examples from each bin for this outcome:
         for bin_start, bin_end in zip(outcome_bins[:-1], outcome_bins[1:]):
@@ -324,10 +338,10 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
             example_input_decoded = [ int_to_text(example).strip() for example in example_input_encoded]
             example_prediction = predictions[chosen_bin_outcome_examples]
             example_df = pd.DataFrame(data={"input": example_input_decoded, "ground truth": example_truth, "prediction": example_prediction})
-            print("\nExamples for", outcome_labels[outcome], "Bin range:", bin_start, bin_end)
+            print("\nExamples for", outcome_labels[outcome], "Bin range:", bin_start, "-", bin_end, ", Num. Samples:", len(bin_outcome_indexes))
             print(example_df.to_string())
     for ax in axs.flat:
-        ax.set(xlabel='Prediction', ylabel='Counts')
+        ax.set(xlabel='Prediction', ylabel='Percentage of samples')
         ax.set_ylim(0, y_axis_max*1.02)
         ax.grid()
     # Hide x labels and tick labels for top plots and y ticks for right plots.
@@ -336,6 +350,8 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=7, examples_per_bin=12):
     plt.tight_layout()
     fig.savefig('outcome_distributions.pdf')
     return mean_prediction
+
+# evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
 
 def statistics_evaluator(predictions_binary, y_binary):
     # Concattenating the strings of the binary value of the prediction and the truth.
@@ -390,13 +406,13 @@ def statistics_table_printer(evaluation_ratios_counts, decimals=3):
     except:
         accuracy = 0
 
-    t = PrettyTable([f"Accuracy {np.round(accuracy*100, decimals=decimals)}%", "Is phishing", "Not phishing"])
-    t.add_row(['Predicted phishing', "TP: {TP}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
-    t.add_row(['', f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%", f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
-    t.add_row(['Predicted safe', "FN: {FN}".format(**evaluation_ratios_counts), "TN: {TN}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%", f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%"])
-    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%"])
+    t = PrettyTable([f"Accuracy {np.round(accuracy*100, decimals=decimals)}%", 'Predicted safe', 'Predicted phishing'])
+    t.add_row(["Not phishing", "TN: {TN}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
+    t.add_row(['', f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%", f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
+    t.add_row(["Is phishing", "FN: {FN}".format(**evaluation_ratios_counts), "TP: {TP}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%", f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%"])
+    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%"])
     print(t)
 
 def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, steps=200, decimals=3):
