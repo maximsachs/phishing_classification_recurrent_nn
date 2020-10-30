@@ -361,7 +361,7 @@ print("Using the class weighting:", class_weight)
 # Training the model
 # Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
 # After stopping training will restore the weights from the best iteration on this value encountered so far.
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
+early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=4, restore_best_weights=True)
 history = model.fit(X_train_encoded_padded, y_train,
                     epochs=100,
                     validation_data=(X_test_encoded_padded, y_test),
