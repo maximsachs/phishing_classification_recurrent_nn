@@ -3,37 +3,18 @@ import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
 import pprint
-import urllib.request
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing import sequence
 from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
-from os import listdir
-from os.path import isfile, join
-
 
 random_seed = 16
 
 np.random.seed(random_seed)
 
 print("Phishtank Online Valid Dataset")
-
-#Combining all online-valid datasets from the dataset folder
-dataset_folder = "online_valid_datasets"
-online_valid_df = pd.DataFrame()
-for f in listdir(dataset_folder):
-    f_path = join(dataset_folder, f)
-    if isfile(f_path) and "online-valid" in f and ".csv" in f:
-        if online_valid_df.empty:
-            online_valid_df = pd.read_csv(f_path)
-            online_valid_df.set_index("phish_id", inplace=True)
-        else:
-            online_valid_df_new = pd.read_csv(f_path)
-            online_valid_df_new.set_index("phish_id", inplace=True)
-            online_valid_df = online_valid_df.merge(online_valid_df_new, how="outer")
-
-online_valid_df.to_csv("combined_online_valid.csv")
+online_valid_df = pd.read_csv("combined_online_valid.csv")
 
 # Extracting tld and domain name.
 tld_count = defaultdict(lambda: 0)
@@ -55,13 +36,11 @@ tld_print["OTHERS"] = tld_df.iloc[show_top_n:].sum()
 
 online_valid_df["domain_names"] = domain_names
 
-
-whitelist_file_alexa = "top-1m_alexa.csv"
 whitelist_file_umbrella = "top-1m_umbrella.csv"
-alexa_whitelist_df = pd.read_csv(whitelist_file_umbrella, header=None, names=["rank", "domain_names"])
+whitelist_df = pd.read_csv(whitelist_file_umbrella, header=None, names=["rank", "domain_names"])
 
 # Finding if there are any domains that are also in the whitelist.
-domains_in_whitelist = np.intersect1d(online_valid_df["domain_names"], alexa_whitelist_df["domain_names"])
+domains_in_whitelist = np.intersect1d(online_valid_df["domain_names"], whitelist_df["domain_names"])
 # Tagging the whitelisted domains as such.
 online_valid_df["in_whitelist"] = np.in1d(online_valid_df["domain_names"], domains_in_whitelist)
 
@@ -72,26 +51,26 @@ print(f"Percentage of top {show_top_n} tlds: {np.round(100*tld_df.iloc[:show_top
 
 
 print()
-print(whitelist_file_umbrella)
+print("Whitelist file:", whitelist_file_umbrella)
 
-print(alexa_whitelist_df.shape[0], "rows")
-print(alexa_whitelist_df.head(20))
+print(whitelist_df.shape[0], "rows")
+print(whitelist_df.head(20))
 
 print()
 print("Number of urls that have domains which are in the whilelist:", online_valid_df["in_whitelist"].sum())
 
 
 # For the dataset, excluding all where the domain name is in the whitelist.
-
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
-alexa_whitelist_df_without_intersection = alexa_whitelist_df.loc[np.invert(alexa_whitelist_df['domain_names'].isin(domains_in_whitelist))]
+whitelist_df_without_intersection = whitelist_df.loc[np.invert(whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
-oversampling_rate = 1.25 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+# Set oversampling_rate to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+oversampling_rate = 1.25 
 
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
-whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
+whitelist_domains = np.random.choice(whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
 
-# Calling a phishing url 1 and a benign url 0.
+# Calling a phishing url 1 and a not-phishing url 0.
 # Using character encoding as the vocabulary.
 # Feeding the url as the sequence.
 
@@ -288,14 +267,9 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=5, graph_bins=15, examples_per_b
         ax.set(xlabel='Prediction', ylabel='Percentage of samples')
         ax.set_ylim(0, y_axis_max*1.02)
         ax.grid()
-    # Hide x labels and tick labels for top plots and y ticks for right plots.
-    # for ax in axs.flat:
-    #     ax.label_outer()
     plt.tight_layout()
     fig.savefig('outcome_distributions.pdf')
     return mean_prediction
-
-# evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
 
 def statistics_evaluator(predictions_binary, y_binary):
     # Concattenating the strings of the binary value of the prediction and the truth.
@@ -349,14 +323,23 @@ def statistics_table_printer(evaluation_ratios_counts, decimals=3):
         accuracy = (evaluation_ratios_counts.get("TP",0)+evaluation_ratios_counts.get("TN",0))/(evaluation_ratios_counts.get("TP",0)+evaluation_ratios_counts.get("TN",0) + evaluation_ratios_counts.get("FP",0) + evaluation_ratios_counts.get("FN",0))
     except:
         accuracy = 0
-
-    t = PrettyTable([f"Accuracy {np.round(accuracy*100, decimals=decimals)}%", 'Predicted safe', 'Predicted phishing'])
-    t.add_row(["Not phishing", "TN: {TN}".format(**evaluation_ratios_counts), "FP: {FP}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%", f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
-    t.add_row(['', f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%", f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
-    t.add_row(["Is phishing", "FN: {FN}".format(**evaluation_ratios_counts), "TP: {TP}".format(**evaluation_ratios_counts)])
-    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%", f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%"])
-    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%"])
+    t = PrettyTable([f"Accuracy {np.round(accuracy*100, decimals=decimals)}%",
+                     'Predicted safe',
+                     'Predicted phishing'])
+    t.add_row(["Not phishing",
+               "TN: {TN}".format(**evaluation_ratios_counts),
+               "FP: {FP}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"NPV: {np.round(negative_predictive_value*100, decimals=decimals)}%",
+                   f"FDR: {np.round(false_discovery_rate*100, decimals=decimals)}%"])
+    t.add_row(['', f"TNR: {np.round(true_negative_rate*100, decimals=decimals)}%",
+                   f"FPR: {np.round(false_positive_rate*100, decimals=decimals)}%"])
+    t.add_row(["Is phishing",
+               "FN: {FN}".format(**evaluation_ratios_counts), 
+               "TP: {TP}".format(**evaluation_ratios_counts)])
+    t.add_row(['', f"FOR: {np.round(false_omission_rate*100, decimals=decimals)}%",
+                   f"PPV: {np.round(positive_predictive_value*100, decimals=decimals)}%"])
+    t.add_row(['', f"FNR: {np.round(false_negative_rate*100, decimals=decimals)}%", 
+                   f"TPR: {np.round(true_positive_rate*100, decimals=decimals)}%"])
     print(t)
 
 def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, steps=200, decimals=3):
@@ -380,44 +363,24 @@ def threshold_evaluation_plotter(X, y, min_threshold=0.05, max_threshold=0.95, s
     stat_df["FNR"] = counts_df["FN"]/(counts_df["TP"]+counts_df["FN"])
     stat_df["NPV"] = counts_df["TN"]/(counts_df["TN"]+counts_df["FN"])
     stat_df["TNR"] = counts_df["TN"]/(counts_df["FP"]+counts_df["TN"])
-    # print(stat_df)
     fig = stat_df.plot(kind='line',  figsize=(20, 7), fontsize=16, lw=3).get_figure()
-    # plt.tight_layout()
+    plt.tight_layout()
     plt.grid()
     fig.savefig('threshold_statistics_sweep.pdf')
     print("Best performance at threshold:", stat_df['accuracy'].idxmax())
-    # best_performance = stat_df.loc[stat_df['accuracy'].idxmax()]
-    # t = PrettyTable(["Accuracy "+str(np.round(best_performance["accuracy"]*100, decimals=decimals))+"%", "Is phishing", "Not phishing"])
-    # t.add_row(['Predicted phishing', f"PPV: "+str(np.round(best_performance["PPV"]*100, decimals=decimals))+"%", f"FDR: "+str(np.round(best_performance["FDR"]*100, decimals=decimals))+"%"])
-    # t.add_row(['', f"TPR: "+str(np.round(best_performance["TPR"]*100, decimals=decimals))+"%", f"FPR: "+str(np.round(best_performance["FPR"]*100, decimals=decimals))+"%"])
-    # t.add_row(['Predicted safe', f"FOR: "+str(np.round(best_performance["FOR"]*100, decimals=decimals))+"%", f"NPV: "+str(np.round(best_performance["NPV"]*100, decimals=decimals))+"%"])
-    # t.add_row(['', f"FNR: "+str(np.round(best_performance["FNR"]*100, decimals=decimals))+"%", f"TNR: "+str(np.round(best_performance["TNR"]*100, decimals=decimals))+"%"])
-    # print(t)
     return stat_df['accuracy'].idxmax()
-
-
-results = model.evaluate(X_test_encoded_padded, y_test)
-print(results)
-
-# mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=0.5)
-best_threshold = threshold_evaluation_plotter(X_test_encoded_padded, y_test)
-mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
-
-# Making a prediction on a url using the model:
-# print()
-# show_top_n = 10
-# print(f"Predicting the first {show_top_n} examples from the test data:")
-
-# first_n_predictions = model.predict(X_test_encoded_padded[:show_top_n])
-# print(first_n_predictions.flatten())
-
-# prediction_df = pd.DataFrame(data={"domain_names": X_test[:show_top_n], "predictions": first_n_predictions.flatten(), "truth": y_test[:show_top_n]})
-# print(prediction_df)
 
 def predict_url(url):
     encoded_text = sequence.pad_sequences([text_to_int(url)], max_seq_len)
     result = model.predict(encoded_text) 
     print("Prediction on url:", url, result[0][0])
+
+
+results = model.evaluate(X_test_encoded_padded, y_test)
+print(results)
+best_threshold = threshold_evaluation_plotter(X_test_encoded_padded, y_test)
+mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
+
 
 print("\nPhishing ULR examples:")
 predict_url("frgcxtmjzfjpdcusge.top")
@@ -426,18 +389,11 @@ predict_url("evil.madeupurl.phish")
 
 
 print("\nSafe URL examples:")
-predict_url("sharelatex.cryptobro.eu")
-predict_url("sharelatex.cryptobro.eu:5000")
-
 predict_url("google.com")
 predict_url("www.google.com")
 predict_url("gmail.google.com")
 predict_url("mail.google.com")
-
 predict_url("tudelft.nl")
-
 predict_url("brightspace.tudelft.nl")
-
 predict_url("colab.research.google.com")
-
 predict_url("00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr")
