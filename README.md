@@ -404,8 +404,6 @@ Prediction on url: evilmadeupurl.phish 2.8354718e-05
 Prediction on url: evil.madeupurl.phish 4.8922248e-06
 
 Safe URL examples:
-Prediction on url: sharelatex.cryptobro.eu 0.0003382023
-Prediction on url: sharelatex.cryptobro.eu:5000 0.9999814
 Prediction on url: google.com 2.0498774e-05
 Prediction on url: www.google.com 0.000113828835
 Prediction on url: gmail.google.com 6.681633e-06

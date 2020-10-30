@@ -165,51 +165,6 @@ print(list(zip(X_test_encoded_padded[:show_top_n], y_test[:show_top_n])))
 
 # Creating the recurrent model for the predictions:
 print("\n---------------Tensorflow magic------------------\n")
-# print(tf.config.list_physical_devices('GPU'))
-# For some reason needed so the code runs properly on the gpu.
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-    print('gpu', gpu)
-    tf.config.experimental.set_memory_growth(gpu, True)
-    print('memory growth:' , tf.config.experimental.get_memory_growth(gpu))
-
-# https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM
-model = tf.keras.Sequential([
-    tf.keras.layers.Embedding(vocab_size, 64),
-    # tf.keras.layers.LSTM(512, return_sequences=True),
-    tf.keras.layers.LSTM(128),
-    # tf.keras.layers.LSTM(128, go_backwards=True),
-    # tf.keras.layers.Dense(512),
-    # tf.keras.layers.Dense(128,activation="tanh"),
-    # tf.keras.layers.Dense(128),
-    tf.keras.layers.Dense(128,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(32,activation="sigmoid"),
-    # tf.keras.layers.Dense(32),
-    # tf.keras.layers.Dense(16),
-    tf.keras.layers.Dense(1, activation="sigmoid")
-])
-
-
-# Compiling the model
-model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
-print(model.summary())
-class_weight={0: (1/(oversampling_rate+1)), 1: (oversampling_rate/(oversampling_rate+1))}
-print("Using the class weighting:", class_weight)
-# Training the model
-# Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
-# After stopping training will restore the weights from the best iteration on this value encountered so far.
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
-# history = model.fit(X_train_encoded_padded, y_train, epochs=100, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train, callbacks=[early_stopping_callback])
-history = model.fit(X_train_encoded_padded, y_train,
-                    epochs=100,
-                    validation_data=(X_test_encoded_padded, y_test),
-                    class_weight=class_weight,
-                    sample_weight=sample_weights_train,
-                    callbacks=[early_stopping_callback])
-
 #Evaluating the model
 def evaluate_nn_model(X, y, threshold=0.5, bins=5, graph_bins=15, examples_per_bin=15):
     """
@@ -375,6 +330,50 @@ def predict_url(url):
     result = model.predict(encoded_text) 
     print("Prediction on url:", url, result[0][0])
 
+# print(tf.config.list_physical_devices('GPU'))
+# For some reason needed so the code runs properly on the gpu.
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    print('gpu', gpu)
+    tf.config.experimental.set_memory_growth(gpu, True)
+    print('memory growth:' , tf.config.experimental.get_memory_growth(gpu))
+
+# https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM
+model = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, 64),
+    # tf.keras.layers.LSTM(512, return_sequences=True),
+    tf.keras.layers.LSTM(128),
+    # tf.keras.layers.LSTM(128, go_backwards=True),
+    # tf.keras.layers.Dense(512),
+    # tf.keras.layers.Dense(128,activation="tanh"),
+    # tf.keras.layers.Dense(128),
+    tf.keras.layers.Dense(128,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(512,activation="tanh"),
+    # tf.keras.layers.Dense(32,activation="sigmoid"),
+    # tf.keras.layers.Dense(32),
+    # tf.keras.layers.Dense(16),
+    tf.keras.layers.Dense(1, activation="sigmoid")
+])
+
+
+# Compiling the model
+model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
+print(model.summary())
+class_weight={0: (1/(oversampling_rate+1)), 1: (oversampling_rate/(oversampling_rate+1))}
+print("Using the class weighting:", class_weight)
+# Training the model
+# Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
+# After stopping training will restore the weights from the best iteration on this value encountered so far.
+early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
+# history = model.fit(X_train_encoded_padded, y_train, epochs=100, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train, callbacks=[early_stopping_callback])
+history = model.fit(X_train_encoded_padded, y_train,
+                    epochs=100,
+                    validation_data=(X_test_encoded_padded, y_test),
+                    class_weight=class_weight,
+                    sample_weight=sample_weights_train,
+                    callbacks=[early_stopping_callback])
 
 results = model.evaluate(X_test_encoded_padded, y_test)
 print(results)
