@@ -4,6 +4,9 @@ Makes use of Phishtank online valid datasets and Cisco Umbrella top 1 million do
 
 Run the dataset_downloader.py to download one new sample from phishtank and merge any new urls into the combined dataset. Could be automated using crontab.
 
+### Youtube video walthrough of the code:
+
+[![](http://img.youtube.com/vi/ak10IUlVsvA/0.jpg)](http://www.youtube.com/watch?v=ak10IUlVsvA "")
 
 # Results
 
