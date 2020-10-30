@@ -9,6 +9,9 @@ from tensorflow.keras.preprocessing import sequence
 from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
+from os import listdir
+from os.path import isfile, join
+
 
 random_seed = 16
 
@@ -16,81 +19,19 @@ np.random.seed(random_seed)
 
 print("Phishtank Online Valid Dataset")
 
-#Combining multiple online-valid datasets from different days to get more unique samples.
-online_valid_df_1 = pd.read_csv("online-valid_2020-10-08.csv")
-online_valid_df_1.set_index("phish_id", inplace=True)
-online_valid_df_2 = pd.read_csv("online-valid_2020-10-19.csv")
-online_valid_df_2.set_index("phish_id", inplace=True)
-online_valid_df_3 = pd.read_csv("online-valid_2020-10-20.csv")
-online_valid_df_3.set_index("phish_id", inplace=True)
-online_valid_df_4 = pd.read_csv("online-valid_2020-10-21.csv")
-online_valid_df_4.set_index("phish_id", inplace=True)
-online_valid_df_5 = pd.read_csv("online-valid_2020-10-21_2.csv")
-online_valid_df_5.set_index("phish_id", inplace=True)
-online_valid_df_6 = pd.read_csv("online-valid_2020-10-22_1.csv")
-online_valid_df_6.set_index("phish_id", inplace=True)
-online_valid_df_7 = pd.read_csv("online-valid_2020-10-22_2.csv")
-online_valid_df_7.set_index("phish_id", inplace=True)
-online_valid_df_8 = pd.read_csv("online-valid_2020-10-23_1.csv")
-online_valid_df_8.set_index("phish_id", inplace=True)
-online_valid_df_9 = pd.read_csv("online-valid_2020-10-24.csv")
-online_valid_df_9.set_index("phish_id", inplace=True)
-online_valid_df_10 = pd.read_csv("online-valid_2020-10-24_2.csv")
-online_valid_df_10.set_index("phish_id", inplace=True)
-online_valid_df_11 = pd.read_csv("online-valid_2020-10-24_3.csv")
-online_valid_df_11.set_index("phish_id", inplace=True)
-online_valid_df_12 = pd.read_csv("online-valid_2020-10-25_1.csv")
-online_valid_df_12.set_index("phish_id", inplace=True)
-online_valid_df_13 = pd.read_csv("online-valid_2020-10-25_2.csv")
-online_valid_df_13.set_index("phish_id", inplace=True)
-online_valid_df_14 = pd.read_csv("online-valid_2020-10-25_3.csv")
-online_valid_df_14.set_index("phish_id", inplace=True)
-online_valid_df_15 = pd.read_csv("online-valid_2020-10-26_1.csv")
-online_valid_df_15.set_index("phish_id", inplace=True)
-online_valid_df_16 = pd.read_csv("online-valid_2020-10-26_2.csv")
-online_valid_df_16.set_index("phish_id", inplace=True)
-online_valid_df_17 = pd.read_csv("online-valid_2020-10-26_3.csv")
-online_valid_df_17.set_index("phish_id", inplace=True)
-online_valid_df_18 = pd.read_csv("online-valid_2020-10-27_1.csv")
-online_valid_df_18.set_index("phish_id", inplace=True)
-online_valid_df_19 = pd.read_csv("online-valid_2020-10-27_2.csv")
-online_valid_df_19.set_index("phish_id", inplace=True)
-online_valid_df_20 = pd.read_csv("online-valid_2020-10-27_3.csv")
-online_valid_df_20.set_index("phish_id", inplace=True)
-online_valid_df_21 = pd.read_csv("online-valid_2020-10-28_1.csv")
-online_valid_df_21.set_index("phish_id", inplace=True)
-online_valid_df_22 = pd.read_csv("online-valid_2020-10-28_2.csv")
-online_valid_df_22.set_index("phish_id", inplace=True)
-online_valid_df_23 = pd.read_csv("online-valid_2020-10-28_3.csv")
-online_valid_df_23.set_index("phish_id", inplace=True)
-online_valid_df_24 = pd.read_csv("online-valid_2020-10-29_1.csv")
-online_valid_df_24.set_index("phish_id", inplace=True)
-
-
-online_valid_df = online_valid_df_1.merge(online_valid_df_2, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_3, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_4, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_5, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_6, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_7, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_8, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_9, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_10, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_11, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_12, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_13, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_14, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_15, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_16, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_17, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_18, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_19, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_20, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_21, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_22, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_23, how="outer")
-online_valid_df = online_valid_df.merge(online_valid_df_24, how="outer")
-
+#Combining all online-valid datasets from the dataset folder
+dataset_folder = "online_valid_datasets"
+online_valid_df = pd.DataFrame()
+for f in listdir(dataset_folder):
+    f_path = join(dataset_folder, f)
+    if isfile(f_path) and "online-valid" in f and ".csv" in f:
+        if online_valid_df.empty:
+            online_valid_df = pd.read_csv(f_path)
+            online_valid_df.set_index("phish_id", inplace=True)
+        else:
+            online_valid_df_new = pd.read_csv(f_path)
+            online_valid_df_new.set_index("phish_id", inplace=True)
+            online_valid_df = online_valid_df.merge(online_valid_df_new, how="outer")
 
 online_valid_df.to_csv("combined_online_valid.csv")
 
@@ -145,7 +86,7 @@ print("Number of urls that have domains which are in the whilelist:", online_val
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
 alexa_whitelist_df_without_intersection = alexa_whitelist_df.loc[np.invert(alexa_whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
-oversampling_rate = 1 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+oversampling_rate = 1.25 # Set this to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
 
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
 whitelist_domains = np.random.choice(alexa_whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
@@ -281,7 +222,7 @@ print("Using the class weighting:", class_weight)
 # Training the model
 # Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
 # After stopping training will restore the weights from the best iteration on this value encountered so far.
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=4, restore_best_weights=True)
+early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
 # history = model.fit(X_train_encoded_padded, y_train, epochs=100, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train, callbacks=[early_stopping_callback])
 history = model.fit(X_train_encoded_padded, y_train,
                     epochs=100,
@@ -332,7 +273,10 @@ def evaluate_nn_model(X, y, threshold=0.5, bins=5, graph_bins=15, examples_per_b
         for bin_start, bin_end in zip(outcome_bins[:-1], outcome_bins[1:]):
             bin_outcome_indexes = np.where( np.logical_and( np.array(outcome_predictions) >= bin_start, np.array(outcome_predictions) < bin_end ))[0]
             bin_outcome_indexes = outcome_indexes[bin_outcome_indexes]
-            chosen_bin_outcome_examples = np.random.choice(bin_outcome_indexes, size=examples_per_bin, replace=False)
+            if len(bin_outcome_indexes) > examples_per_bin:
+                chosen_bin_outcome_examples = np.random.choice(bin_outcome_indexes, size=examples_per_bin, replace=False)
+            else:
+                chosen_bin_outcome_examples = bin_outcome_indexes
             example_truth = y[chosen_bin_outcome_examples]
             example_input_encoded = X[chosen_bin_outcome_examples]
             example_input_decoded = [ int_to_text(example).strip() for example in example_input_encoded]
