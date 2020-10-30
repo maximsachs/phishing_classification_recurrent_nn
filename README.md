@@ -21,395 +21,614 @@ The neural network outputs values between 0 and 1. The threshold where the decis
     </embed>
 </object>
 
+### Example output
+
 ```
-Best performance at threshold: 0.8233668341708543
-Calculated 7482 predictions with a mean value of 0.45260921120643616
-Evaluating using threshold 0.8233668341708543
-Cut-off threshold: 0.8234
-Evaluation counts: {'TN': 3840, 'FP': 411, 'FN': 474, 'TP': 2757}
+2020-10-30 17:49:46.485027: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+Phishtank Online Valid Dataset
+23736 rows
+    Unnamed: 0                                                url  ...                                       domain_names in_whitelist
+0            0  https://newproductsstore.com/oauth.paypal/myac...  ...                               newproductsstore.com        False
+1            1                             http://dhj.wsaufan.cn/  ...                                     dhj.wsaufan.cn        False
+2            2                               http://olivaspa.com/  ...                                       olivaspa.com        False
+3            3                     https://olivaspa.com/index.php  ...                                       olivaspa.com        False
+4            4                              https://olivaspa.com/  ...                                       olivaspa.com        False
+5            5                    http://izacourier.com/index.php  ...                                     izacourier.com        False
+6            6                   https://izacourier.com/index.php  ...                                     izacourier.com        False
+7            7                            https://izacourier.com/  ...                                     izacourier.com        False
+8            8                 https://www.msn.autheticathor.com/  ...                          www.msn.autheticathor.com        False
+9            9  http://ftaqdxdsljuxbemvdgpkeoqhmmglnrscfsgz-do...  ...  ftaqdxdsljuxbemvdgpkeoqhmmglnrscfsgz-dot-cedar...        False
+10          10  https://ftaqdxdsljuxbemvdgpkeoqhmmglnrscfsgz-d...  ...  ftaqdxdsljuxbemvdgpkeoqhmmglnrscfsgz-dot-cedar...        False
+11          11  http://173.82.129.223/ap/signin?key=a@b.c&amp;...  ...                                     173.82.129.223        False
+12          12  http://osh11.labour.go.th/language/overrides/A...  ...                                 osh11.labour.go.th        False
+13          13  https://dreemhempoil.com/wp-content/secureNetf...  ...                                   dreemhempoil.com        False
+14          14  https://squarenup.org/totalconfirm/index2.php?...  ...                                      squarenup.org        False
+15          15  https://onlinesquare4.org/index2.php?cmd=login...  ...                                  onlinesquare4.org        False
+16          16                         https://onlinesquare4.org/  ...                                  onlinesquare4.org        False
+17          17                          http://onlinesquare4.net/  ...                                  onlinesquare4.net        False
+18          18  http://www.gadalenterprises.com/wp-includes/za...  ...                           www.gadalenterprises.com        False
+19          19  http://miansoft.com/images/_notes/w/we/wee/tra...  ...                                       miansoft.com        False
+
+[20 rows x 10 columns]
+             com   ru  net  org   br  xyz   uk  top  info   ph   in  link   id   cc   cn   ly   fr   io   de   it  OTHERS
+TLD Count  13905  945  776  477  373  360  354  339   243  235  221   211  205  174  164  146  144  144  139  135    4046
+Percentage of top 20 tlds: 82.95 %
+
+Whitelist file: top-1m_umbrella.csv
+1000000 rows
+    rank                     domain_names
+0      1                       google.com
+1      2                   www.google.com
+2      3                    microsoft.com
+3      4                     facebook.com
+4      5                      netflix.com
+5      6                windowsupdate.com
+6      7                  ftl.netflix.com
+7      8             prod.ftl.netflix.com
+8      9               data.microsoft.com
+9     10           api-global.netflix.com
+10    11          ctldl.windowsupdate.com
+11    12        nrdp.prod.ftl.netflix.com
+12    13                  doubleclick.net
+13    14                g.doubleclick.net
+14    15      safebrowsing.googleapis.com
+15    16  settings-win.data.microsoft.com
+16    17                      youtube.com
+17    18      googleads.g.doubleclick.net
+18    19        events.data.microsoft.com
+19    20                         live.com
+
+Number of urls that have domains which are in the whilelist: 1442
+
+Selected Data Examples:
+Phishing domains: ['newproductsstore.com' 'dhj.wsaufan.cn' 'olivaspa.com' ...
+ '0992334.weebly.com' 'gruppwaa139.my03.com' 'bungaabeauty.com'] 22294
+Benign domains: ['co.th.lan' 'ext.selected-search.com' 'visio.officeapps.live.com' ...
+ 'buy1.rcjitdd.com' 'agwu.rs' 'bla2hs.org'] 27867
+
+
+Encoding Vocabulary (73) used:
+[' ', 'z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a', '_', 'Z', 'Y', 'X', 'W', 'V', 'U', 'T', 'S', 'R', 'Q', 'P', 'O', 'N', 'M', 'L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', '@', '?', '=', ';', ':', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '.', '-', '&', '#']
+Encoding example:
+[13 22  4 11  9 12 23  6 24  7  8  8  7 12  9 22 69 24 12 14]
+newproductsstore.com
+[926, 179, 150, 150, 150, 122, 113, 113, 111, 105, 105, 104, 102, 102, 102, 100, 95, 95, 94, 93]
+4300 URLs longer than the cutoff length 40
+
+Training and testing data: (showing first 5)
+Train data 42636 samples
+[('aon-com.mail.protection.outlook.com', 0, 0.8), ('sultanbetgirisadresimiz1.blogspot.com', 1, 1.0), ('fwdproxy-atn-004.fbsv.net', 0, 0.8), ('robot.ba', 0, 0.8), ('rakuten.co.jp.rakutenlogin.best', 1, 1.0)]
+Test data 7525 samples
+[('m.bdnews24.com', 0, 0.8), ('pinnerx.com', 1, 1.0), ('www.otropuerto.com', 1, 1.0), ('52e4t.csb.app', 1, 1.0), ('wk.slack.com', 0, 0.8)]
+
+Encoded data: (showing first 5)
+Train data 42636 samples, encoded
+[(array([26, 12, 13, 70, 24, 12, 14, 69, 14, 26, 18, 15, 69, 11,  9, 12,  7,
+       22, 24,  7, 18, 12, 13, 69, 12,  6,  7, 15, 12, 12, 16, 69, 24, 12,
+       14]), 0), (array([ 8,  6, 15,  7, 26, 13, 25, 22,  7, 20, 18,  9, 18,  8, 26, 23,  9,
+       22,  8, 18, 14, 18,  1, 67, 69, 25, 15, 12, 20,  8, 11, 12,  7, 69,
+       24, 12, 14]), 1), (array([21,  4, 23, 11,  9, 12,  3,  2, 70, 26,  7, 13, 70, 68, 68, 64, 69,
+       21, 25,  8,  5, 69, 13, 22,  7]), 0), (array([ 9, 12, 25, 12,  7, 69, 25, 26]), 0), (array([ 9, 26, 16,  6,  7, 22, 13, 69, 24, 12, 69, 17, 11, 69,  9, 26, 16,
+        6,  7, 22, 13, 15, 12, 20, 18, 13, 69, 25, 22,  8,  7]), 1)]
+Test data 7525 samples, encoded
+[(array([14, 69, 25, 23, 13, 22,  4,  8, 66, 64, 69, 24, 12, 14]), 0), (array([11, 18, 13, 13, 22,  9,  3, 69, 24, 12, 14]), 1), (array([ 4,  4,  4, 69, 12,  7,  9, 12, 11,  6, 22,  9,  7, 12, 69, 24, 12,
+       14]), 1), (array([63, 66, 22, 64,  7, 69, 24,  8, 25, 69, 26, 11, 11]), 1), (array([ 4, 16, 69,  8, 15, 26, 24, 16, 69, 24, 12, 14]), 0)]
+
+Encoded and padded data: (showing first 5)
+Train data 42636 samples, encoded
+[(array([ 0,  0,  0,  0,  0, 26, 12, 13, 70, 24, 12, 14, 69, 14, 26, 18, 15,
+       69, 11,  9, 12,  7, 22, 24,  7, 18, 12, 13, 69, 12,  6,  7, 15, 12,
+       12, 16, 69, 24, 12, 14], dtype=int32), 0), (array([ 0,  0,  0,  8,  6, 15,  7, 26, 13, 25, 22,  7, 20, 18,  9, 18,  8,
+       26, 23,  9, 22,  8, 18, 14, 18,  1, 67, 69, 25, 15, 12, 20,  8, 11,
+       12,  7, 69, 24, 12, 14], dtype=int32), 1), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 21,  4,
+       23, 11,  9, 12,  3,  2, 70, 26,  7, 13, 70, 68, 68, 64, 69, 21, 25,
+        8,  5, 69, 13, 22,  7], dtype=int32), 0), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9, 12,
+       25, 12,  7, 69, 25, 26], dtype=int32), 0), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  9, 26, 16,  6,  7, 22, 13, 69,
+       24, 12, 69, 17, 11, 69,  9, 26, 16,  6,  7, 22, 13, 15, 12, 20, 18,
+       13, 69, 25, 22,  8,  7], dtype=int32), 1)]
+Test data 7525 samples, encoded
+[(array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0,  0,  0,  0, 14, 69, 25, 23, 13, 22,  4,  8,
+       66, 64, 69, 24, 12, 14], dtype=int32), 0), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 11, 18, 13, 13, 22,
+        9,  3, 69, 24, 12, 14], dtype=int32), 1), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  4,  4,  4, 69, 12,  7,  9, 12, 11,  6, 22,  9,
+        7, 12, 69, 24, 12, 14], dtype=int32), 1), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 63, 66, 22, 64,  7, 69, 24,
+        8, 25, 69, 26, 11, 11], dtype=int32), 1), (array([ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4, 16, 69,  8, 15, 26,
+       24, 16, 69, 24, 12, 14], dtype=int32), 0)]
+
+---------------Tensorflow magic------------------
+
+2020-10-30 17:49:52.516667: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2020-10-30 17:49:52.519108: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
+2020-10-30 17:49:52.539516: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.540066: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0000:00:08.0 name: EIZO Quadro MED-XN92 computeCapability: 7.5
+coreClock: 1.545GHz coreCount: 36 deviceMemorySize: 7.79GiB deviceMemoryBandwidth: 387.49GiB/s
+2020-10-30 17:49:52.540129: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+2020-10-30 17:49:52.544990: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
+2020-10-30 17:49:52.545083: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
+2020-10-30 17:49:52.546355: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2020-10-30 17:49:52.547713: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2020-10-30 17:49:52.550908: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2020-10-30 17:49:52.552210: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
+2020-10-30 17:49:52.552672: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
+2020-10-30 17:49:52.552804: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.553658: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.554074: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+gpu PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
+memory growth: True
+2020-10-30 17:49:52.566294: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2020-10-30 17:49:52.566683: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2020-10-30 17:49:52.566874: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.567403: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0000:00:08.0 name: EIZO Quadro MED-XN92 computeCapability: 7.5
+coreClock: 1.545GHz coreCount: 36 deviceMemorySize: 7.79GiB deviceMemoryBandwidth: 387.49GiB/s
+2020-10-30 17:49:52.567458: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+2020-10-30 17:49:52.567485: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
+2020-10-30 17:49:52.567504: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
+2020-10-30 17:49:52.567526: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2020-10-30 17:49:52.567543: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2020-10-30 17:49:52.567561: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2020-10-30 17:49:52.567575: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.11
+2020-10-30 17:49:52.567594: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
+2020-10-30 17:49:52.567684: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.568042: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:52.568357: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+2020-10-30 17:49:52.568391: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
+2020-10-30 17:49:53.170188: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-10-30 17:49:53.170215: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      0 
+2020-10-30 17:49:53.170242: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 0:   N 
+2020-10-30 17:49:53.170421: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:53.170821: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:53.171182: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:941] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-10-30 17:49:53.171562: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6182 MB memory) -> physical GPU (device: 0, name: EIZO Quadro MED-XN92, pci bus id: 0000:00:08.0, compute capability: 7.5)
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding (Embedding)        (None, None, 64)          4672      
+_________________________________________________________________
+lstm (LSTM)                  (None, 128)               98816     
+_________________________________________________________________
+dense (Dense)                (None, 128)               16512     
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 129       
+=================================================================
+Total params: 120,129
+Trainable params: 120,129
+Non-trainable params: 0
+_________________________________________________________________
+None
+Using the class weighting: {0: 0.4444444444444444, 1: 0.5555555555555556}
+2020-10-30 17:49:56.995192: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+2020-10-30 17:49:56.995550: I tensorflow/core/platform/profile_utils/cpu_utils.cc:108] CPU Frequency: 3696475000 Hz
+Epoch 1/100
+2020-10-30 17:49:58.136541: E tensorflow/core/grappler/optimizers/meta_optimizer.cc:592] layout failed: Invalid argument: Size of values 2 does not match size of permutation 4 @ fanin shape insequential/dense/BiasAdd-0-TransposeNHWCToNCHW-LayoutOptimizer
+2020-10-30 17:49:58.321330: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.11
+2020-10-30 17:49:58.830217: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.11
+2020-10-30 17:49:58.917439: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.8
+1330/1333 [============================>.] - ETA: 0s - loss: 0.2418 - acc: 0.68852020-10-30 17:50:12.174596: E tensorflow/core/grappler/optimizers/meta_optimizer.cc:592] layout failed: Invalid argument: Size of values 2 does not match size of permutation 4 @ fanin shape insequential/dense/BiasAdd-0-TransposeNHWCToNCHW-LayoutOptimizer
+1333/1333 [==============================] - 16s 9ms/step - loss: 0.2417 - acc: 0.6886 - val_loss: 0.4471 - val_acc: 0.7751
+Epoch 2/100
+1333/1333 [==============================] - 11s 9ms/step - loss: 0.1911 - acc: 0.7768 - val_loss: 0.4404 - val_acc: 0.7847
+Epoch 3/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1792 - acc: 0.7961 - val_loss: 0.3821 - val_acc: 0.8101
+Epoch 4/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1678 - acc: 0.8102 - val_loss: 0.4049 - val_acc: 0.7934
+Epoch 5/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1609 - acc: 0.8155 - val_loss: 0.3738 - val_acc: 0.8189
+Epoch 6/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1532 - acc: 0.8283 - val_loss: 0.3472 - val_acc: 0.8342
+Epoch 7/100
+1333/1333 [==============================] - 11s 9ms/step - loss: 0.1397 - acc: 0.8454 - val_loss: 0.3404 - val_acc: 0.8397
+Epoch 8/100
+1333/1333 [==============================] - 11s 8ms/step - loss: 0.1311 - acc: 0.8586 - val_loss: 0.3169 - val_acc: 0.8533
+Epoch 9/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1214 - acc: 0.8670 - val_loss: 0.3090 - val_acc: 0.8623
+Epoch 10/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1119 - acc: 0.8790 - val_loss: 0.3214 - val_acc: 0.8569
+Epoch 11/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.1003 - acc: 0.8911 - val_loss: 0.3133 - val_acc: 0.8690
+Epoch 12/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.0897 - acc: 0.9061 - val_loss: 0.3262 - val_acc: 0.8642
+Epoch 13/100
+1333/1333 [==============================] - 12s 9ms/step - loss: 0.0784 - acc: 0.9189 - val_loss: 0.3467 - val_acc: 0.8638
+236/236 [==============================] - 1s 4ms/step - loss: 0.3090 - acc: 0.8623
+[0.30899688601493835, 0.8623256087303162]
+2020-10-30 17:52:34.855446: E tensorflow/core/grappler/optimizers/meta_optimizer.cc:592] layout failed: Invalid argument: Size of values 2 does not match size of permutation 4 @ fanin shape insequential/dense/BiasAdd-0-TransposeNHWCToNCHW-LayoutOptimizer
+Best performance at threshold: 0.4796482412060301
+Calculated 7525 predictions with a mean value of 0.4370075762271881
+Evaluating using threshold 0.4796482412060301
+Cut-off threshold: 0.4796
+Evaluation counts: {'TN': 3661, 'FP': 583, 'FN': 449, 'TP': 2832}
 +------------------+----------------+--------------------+
-| Accuracy 88.172% | Predicted safe | Predicted phishing |
+| Accuracy 86.286% | Predicted safe | Predicted phishing |
 +------------------+----------------+--------------------+
-|   Not phishing   |    TN: 3840    |      FP: 411       |
-|                  |  NPV: 89.013%  |    FDR: 12.973%    |
-|                  |  TNR: 90.332%  |    FPR: 9.668%     |
-|   Is phishing    |    FN: 474     |      TP: 2757      |
-|                  |  FOR: 10.987%  |    PPV: 87.027%    |
-|                  |  FNR: 14.67%   |    TPR: 85.33%     |
+|   Not phishing   |    TN: 3661    |      FP: 583       |
+|                  |  NPV: 89.075%  |    FDR: 17.072%    |
+|                  |  TNR: 86.263%  |    FPR: 13.737%    |
+|   Is phishing    |    FN: 449     |      TP: 2832      |
+|                  |  FOR: 10.925%  |    PPV: 82.928%    |
+|                  |  FNR: 13.685%  |    TPR: 86.315%    |
 +------------------+----------------+--------------------+
 
-Examples for TN Bin range: 4.2038914e-06 - 0.1645833 , Num. Samples: 3546
+Examples for TN Bin range: 0.00073767104 - 0.09641512 , Num. Samples: 2680
                                input  ground truth  prediction
-0                             uff.br             0    0.000074
-1                       kgridhub.net             0    0.000071
-2                          i.tfag.de             0    0.000049
-3               speed.sng.host.co.ug             0    0.000041
-4   r1---sn-4g5ednsk.googlevideo.com             0    0.000006
-5                        metrilo.com             0    0.000688
-6                  minikube.internal             0    0.081473
-7            duplex.snapchat.com.lan             0    0.000722
-8                  baidu.gcs-web.com             0    0.018649
-9                   artix.aqw.aq.com             0    0.000013
-10             eofihsishihiursgu.biz             0    0.000017
-11            fcai21-2.fna.fbcdn.net             0    0.000006
-12                 logs1412.xiti.com             0    0.000007
-13                 dw32.uptodown.com             0    0.000112
-14    acs.m.taobao.com.itotolink.net             0    0.000006
+0     external.frgn2-1.fna.fbcdn.net             0    0.001826
+1                     m17.zmlxaqo.me             0    0.002751
+2                     m1.pjdzmis.com             0    0.001309
+3                    nl.zazaplay.com             0    0.034415
+4            static.securedtouch.com             0    0.009018
+5                    08.bgp.m565m.cn             0    0.007713
+6                       mc.yandex.ua             0    0.038544
+7                images.meesho.co.id             0    0.094320
+8         e6449.dsce2.akamaiedge.net             0    0.003591
+9                           csub.edu             0    0.023387
+10                      1g.synr.asia             0    0.046314
+11                         open8.com             0    0.065576
+12                   m28.gzankeb.com             0    0.001823
+13    speedtest.mediantbroadband.com             0    0.012560
+14  scontent-lax3-1.cdninstagram.com             0    0.006103
 
-Examples for TN Bin range: 0.1645833 - 0.3291624 , Num. Samples: 101
-                             input  ground truth  prediction
-0                   prospam.pro.dk             0    0.291461
-1         webmail.sakuraexpress.cl             0    0.166276
-2                   mail.lauka.org             0    0.270554
-3                   luckfriend.com             0    0.269514
-4               messagecloud.co.uk             0    0.318155
-5   ksn-url-geo.kaspersky-labs.com             0    0.200115
-6                          htl.bid             0    0.257485
-7              wa.cdn-surfline.com             0    0.311028
-8                 irishmeadows.net             0    0.282818
-9                     aventi.co.uk             0    0.178727
-10                    ip-adress.eu             0    0.310365
-11                  nis-jeddah.com             0    0.218548
-12                learnbook.com.au             0    0.324814
-13                       ubu.ac.th             0    0.206307
-14                   sompocare.com             0    0.229599
+Examples for TN Bin range: 0.09641512 - 0.19209257 , Num. Samples: 338
+                                       input  ground truth  prediction
+0                               batworld.com             0    0.189741
+1                                   meimo.cc             0    0.162660
+2                               ja-tukuba.jp             0    0.181687
+3                                doceree.com             0    0.174871
+4                     webmail.roulemabos.com             0    0.107781
+5                                  uvenco.ru             0    0.135885
+6                                 firmex.com             0    0.180981
+7                                   icldc.ae             0    0.122841
+8   wfqqreader-1252317822.image.myqcloud.com             0    0.156188
+9                                vahblyw.org             0    0.164897
+10                           mitraduta.co.id             0    0.167558
+11                             saglik.gov.tr             0    0.130029
+12                                pfizer.com             0    0.191651
+13                         cantonfair.org.cn             0    0.098778
+14                                oklink.com             0    0.105598
 
-Examples for TN Bin range: 0.3291624 - 0.4937415 , Num. Samples: 68
-                              input  ground truth  prediction
-0                      flowonly.com             0    0.356909
-1                      tosejuna.com             0    0.417197
-2                            edu.bd             0    0.444738
-3                        heatmap.vn             0    0.404180
-4          autodiscover.myrp.edu.sg             0    0.329448
-5        www.davitahelpinghands.com             0    0.403792
-6                       rmazywr.org             0    0.424882
-7                      nic-bank.com             0    0.356714
-8                      moreradio.ru             0    0.436693
-9                       ituqqwd.com             0    0.329223
-10                    tapjoyads.com             0    0.457778
-11  expert-comptable-paris-2eme.com             0    0.420038
-12                 alexscott.com.au             0    0.424583
-13                   luckypushh.com             0    0.404293
-14                      daarvag.com             0    0.420969
+Examples for TN Bin range: 0.19209257 - 0.28777 , Num. Samples: 270
+                           input  ground truth  prediction
+0                    qubiqle.com             0    0.281636
+1                 www.labays.com             0    0.234597
+2                   nfhvkdp.info             0    0.226117
+3                 realgain.co.kr             0    0.228534
+4                    conbase.top             0    0.251976
+5     cwu-vanity.instructure.com             0    0.210433
+6                     enter5.com             0    0.211571
+7                   reachplc.com             0    0.216619
+8   crow-wpengine.netdna-ssl.com             0    0.207189
+9                 www.careem.com             0    0.269816
+10              www.nanovisor.io             0    0.287554
+11                 www.fun2u.biz             0    0.254512
+12                gkinvest.co.id             0    0.249888
+13                  www.3799.com             0    0.208607
+14                   daekong.com             0    0.273093
 
-Examples for TN Bin range: 0.4937415 - 0.6583206 , Num. Samples: 58
-                 input  ground truth  prediction
-0     server.kwh.co.id             0    0.631592
-1     livesupporti.com             0    0.543329
-2      credisur.com.ar             0    0.615295
-3   www.nodemanage.com             0    0.571279
-4     ao-neandertal.fr             0    0.571206
-5         tamsonvn.com             0    0.637497
-6            ahtea.com             0    0.606500
-7          everset.com             0    0.510987
-8       gluon.opngr.in             0    0.625919
-9           meteor.com             0    0.633929
-10             poki.by             0    0.588951
-11     lenovopress.com             0    0.522174
-12    transauer.com.ar             0    0.597781
-13          manasco.be             0    0.550624
-14       supermsav.com             0    0.580832
-
-Examples for TN Bin range: 0.6583206 - 0.8228997 , Num. Samples: 66
-                  input  ground truth  prediction
-0     www.workfront.com             0    0.778051
-1             skift.com             0    0.673103
-2    www.ecdc.europa.eu             0    0.667001
-3   wcproject.so-net.tw             0    0.793860
-4             yoyou.com             0    0.814273
-5     spineuniverse.com             0    0.788195
-6        api5137.d41.co             0    0.802097
-7   comm.mywellness.com             0    0.725134
-8      mbf3g.coccoc.com             0    0.821054
-9           phos.com.cy             0    0.743115
-10     www.macaubet.com             0    0.699770
-11        bimnsaft.info             0    0.747835
-12       enecprogram.ae             0    0.746568
-13         www.dogia.ml             0    0.779521
-14       jahwijrkkyr.cx             0    0.800437
-
-Examples for FP Bin range: 0.8346011 - 0.8676798 , Num. Samples: 23
+Examples for TN Bin range: 0.28777 - 0.38344747 , Num. Samples: 203
                      input  ground truth  prediction
-0              firehol.org             0    0.839287
-1         trumarkmedia.com             0    0.841028
-2   quickdriverupdater.com             0    0.851080
-3              iogame.zone             0    0.842212
-4         mcritiskilo.info             0    0.865129
-5             allianzsp.sk             0    0.844906
-6        epochtimes.com.br             0    0.846198
-7             doylo.com.au             0    0.855685
-8         icocpanutrdeb.cf             0    0.849629
-9         comeconcausa.com             0    0.838330
-10        qbkrecaptcha.com             0    0.867649
-11          mediamanbu.com             0    0.836004
-12   greenweddingshoes.com             0    0.864043
-13       negociosjordi.com             0    0.853819
-14       www.boomlings.com             0    0.834601
+0            utahtutor.com             0    0.371420
+1           mikrosimage.eu             0    0.309477
+2             smzdmimg.com             0    0.349975
+3            coldreams.com             0    0.313818
+4              sdnbhv.info             0    0.379307
+5           xiexingnet.com             0    0.365675
+6              cabralsk.cf             0    0.347865
+7   pdw-adf.userreport.com             0    0.372328
+8             jet-porda.de             0    0.311209
+9            sjgroup.local             0    0.370204
+10              nol.com.br             0    0.315714
+11         www.porntry.com             0    0.374096
+12             dgxinda.com             0    0.325559
+13          np-tokumei.net             0    0.336091
+14             pepsico.com             0    0.303395
 
-Examples for FP Bin range: 0.8676798 - 0.90075845 , Num. Samples: 15
+Examples for TN Bin range: 0.38344747 - 0.4791249 , Num. Samples: 169
+                              input  ground truth  prediction
+0                    www.wrcbtv.com             0    0.441002
+1                   alumnos.upla.cl             0    0.429029
+2                  www.mobil123.com             0    0.435025
+3                      dataminr.com             0    0.441780
+4                   www.frachri.com             0    0.406250
+5                        pkcoieh.ga             0    0.477031
+6   secure07a.amer.gslbjpmchase.com             0    0.385407
+7                     uscategui.com             0    0.414396
+8                  palcomonline.com             0    0.470491
+9                     zuishidai.com             0    0.436745
+10                     daveking.com             0    0.424506
+11                 diariodesign.com             0    0.462537
+12                      liwrnskz.ru             0    0.468292
+13                  www.e-go.com.au             0    0.430346
+14                    felgueres.com             0    0.441377
+
+Examples for FP Bin range: 0.47989374 - 0.5836909 , Num. Samples: 162
+                             input  ground truth  prediction
+0               city-furniture.com             0    0.508803
+1                      opensrs.net             0    0.563031
+2                    travelagu.com             0    0.509845
+3                    zapaka.com.au             0    0.528178
+4   hhscovid19portal.azureedge.net             0    0.499109
+5                   abrankings.com             0    0.481347
+6                     huajindp.com             0    0.557127
+7             offingervipolof.club             0    0.548674
+8                         irinn.ir             0    0.561199
+9                 ntp-sop.inria.fr             0    0.526376
+10                    fj133165.com             0    0.542226
+11                sunny-portal.com             0    0.492807
+12                 kfedisbroke.com             0    0.531020
+13               www.mytestcom.net             0    0.521992
+14                 upc-g.chello.nl             0    0.539581
+
+Examples for FP Bin range: 0.5836909 - 0.687488 , Num. Samples: 150
+                                       input  ground truth  prediction
+0                  support.solarwindsmsp.com             0    0.661952
+1                  ale.yingshidaquan0304.com             0    0.628479
+2   prod.message-broker.last-mile.amazon.dev             0    0.610678
+3                           greerlawfirm.com             0    0.597153
+4                           khartoumbank.com             0    0.633720
+5                         paltalkconnect.com             0    0.635018
+6                               live-hub.net             0    0.594316
+7                             studyfinds.org             0    0.661915
+8                           lzaudholding.com             0    0.623820
+9                                uffs.edu.br             0    0.682886
+10                       michaelnugent.co.uk             0    0.631068
+11  irginia-db5.us-east-1.lb.campuspress.com             0    0.613418
+12                       www.centbrowser.com             0    0.598979
+13                          buhajargroup.com             0    0.676785
+14                              tirumala.org             0    0.630036
+
+Examples for FP Bin range: 0.687488 - 0.7912852 , Num. Samples: 138
+                              input  ground truth  prediction
+0                     montelimar.fr             0    0.787795
+1                          bban.top             0    0.746404
+2                       mail.dmp.re             0    0.736635
+3             nvhfonkbvdekjcwvrt.us             0    0.717489
+4           selangorbusinesshub.com             0    0.743502
+5                   todayxsgpoz.com             0    0.740515
+6                   krebergroup.com             0    0.718761
+7                  tagihanpulsa.com             0    0.723181
+8            www.penookinfotech.com             0    0.707833
+9              livingscriptures.com             0    0.701407
+10  dc-83c8c2e84a76.donate-2020.com             0    0.708266
+11               requentlyfths.club             0    0.752670
+12                 ursoftdns.com.br             0    0.698403
+13           scrabblewordfinder.org             0    0.789190
+14                 naviglandgps.com             0    0.692196
+
+Examples for FP Bin range: 0.7912852 - 0.89508235 , Num. Samples: 77
+                                       input  ground truth  prediction
+0                            freeproxy.world             0    0.891221
+1                 jardindecocagneafrique.com             0    0.809826
+2                     amazingfilehosting.com             0    0.878496
+3                              true-apk.info             0    0.882408
+4                      bluecubecreatives.com             0    0.817033
+5                         stephanecottin.com             0    0.862456
+6                   vibracoustic-cvas.com.tr             0    0.839400
+7   accb.ap-northeast-2.elasticbeanstalk.com             0    0.893960
+8                      tract-old-engines.net             0    0.894969
+9                     teleperformanceusa.com             0    0.859106
+10                   prefabrikyapimarket.com             0    0.867551
+11                org.whois.rfc-clueless.org             0    0.858679
+12                            poetikatour.lv             0    0.876996
+13                 staplescanada.zendesk.com             0    0.799101
+14                           thaidevhost.com             0    0.807563
+
+Examples for FP Bin range: 0.89508235 - 0.9988795 , Num. Samples: 55
+                                       input  ground truth  prediction
+0                        listener.ecp123.com             0    0.897503
+1            www.eus-www.sway-extensions.com             0    0.958327
+2                 sup.app-bang-dream-gbp.com             0    0.931483
+3                      authns1.webpartner.dk             0    0.966933
+4                        movable-ink-601.com             0    0.988290
+5                    www.mercadolibre.com.ar             0    0.914418
+6   ns8.aaafc94b3a37b75ae9cb60afc42e86fe.org             0    0.996585
+7              image.harryanddavid-email.com             0    0.965513
+8                     nationalparksite.co.uk             0    0.942953
+9                       puppet.securealm.net             0    0.923198
+10         hadiahfreefireindonesia.go1.my.id             0    0.996508
+11                     unithese-resteven.icu             0    0.951225
+12   unitevous-transedufudom-enusomozent.net             0    0.963450
+13                  upos-sz-static.hdslb.com             0    0.897458
+14                                2095101.ru             0    0.932946
+
+Examples for FN Bin range: 0.0015901173 - 0.09708761 , Num. Samples: 86
+                                       input  ground truth  prediction
+0                      old.gotyoufloored.com             1    0.015478
+1   doc.google.share.pressurecookerindia.com             1    0.014898
+2                       senat.poltekba.ac.id             1    0.089448
+3                      winerspot.mikecrm.com             1    0.030749
+4                                newmy-3.com             1    0.018185
+5                                apptuts.bio             1    0.086695
+6                               wifreight.cf             1    0.008036
+7                     takipci.sosyalkedi.com             1    0.010906
+8                              ligatokens.io             1    0.080280
+9                                 igoh2o.net             1    0.028993
+10                      top.chasingtheid.com             1    0.002966
+11              bayanicgiyimsitesi.somee.com             1    0.037803
+12                            www.navic7.net             1    0.036665
+13                   redirectbdp.totispa.com             1    0.021853
+14                                  sovve.nl             1    0.092889
+
+Examples for FN Bin range: 0.09708761 - 0.1925851 , Num. Samples: 58
+                                       input  ground truth  prediction
+0                             www.control.pw             1    0.102346
+1                                  ibn36.com             1    0.144847
+2                   sexeducation.atspace.com             1    0.175864
+3                                 atbpro.com             1    0.143024
+4                                 moatia.com             1    0.131405
+5                         faleupas.kissr.com             1    0.177808
+6                            tantiengiang.vn             1    0.102041
+7                          forum.sexabout.ru             1    0.104568
+8                    webmail.jomolufarms.com             1    0.099579
+9                            events-sa.co.za             1    0.155235
+10      americanas.app.seuatendimento.credit             1    0.139100
+11                        sh1493982.a.had.su             1    0.142146
+12                                boclog.com             1    0.158257
+13  n.securedupgradeaccess.com.mgccampus.com             1    0.109232
+14                                 tu762.com             1    0.123681
+
+Examples for FN Bin range: 0.1925851 - 0.2880826 , Num. Samples: 98
+                           input  ground truth  prediction
+0              www.coderllci.com             1    0.266152
+1                    suelunn.com             1    0.276253
+2                    irporel.com             1    0.192658
+3                  eagle-its.com             1    0.232300
+4                shop-sports.biz             1    0.229206
+5                        anon.to             1    0.205724
+6                    s-venmo.com             1    0.201042
+7                www.agfmanu.com             1    0.199795
+8              assicuriamoci.net             1    0.282765
+9   www.one.file.xclusivehit.net             1    0.207554
+10                  medicalbi.it             1    0.249609
+11                    shleta.com             1    0.230437
+12                    iaak12.org             1    0.214448
+13                    suxury.com             1    0.228365
+14          wagrup-new.qhigh.com             1    0.276561
+
+Examples for FN Bin range: 0.2880826 - 0.3835801 , Num. Samples: 79
+                      input  ground truth  prediction
+0            whatssappp.top             1    0.366372
+1           nalgsovetnyk.ru             1    0.295397
+2             updtowa.xf.cz             1    0.370194
+3         csgomagic-win.com             1    0.308319
+4   mail.mohdnourshahen.com             1    0.365940
+5             kartam.com.au             1    0.352101
+6           rhodvillecu.com             1    0.340045
+7                272101.com             1    0.351776
+8             rollaries.com             1    0.322299
+9            tierretyr.live             1    0.319244
+10        www.sfs-group.net             1    0.345325
+11             iphonexn.com             1    0.339238
+12              govdvla.com             1    0.304174
+13               myeeuk.com             1    0.297938
+14          licogi18.com.vn             1    0.303316
+
+Examples for FN Bin range: 0.3835801 - 0.47907758 , Num. Samples: 127
+                          input  ground truth  prediction
+0               misrschools.com             1    0.462270
+1                  ciet-itac.ca             1    0.472288
+2                   immb.com.au             1    0.405964
+3               actionfilmz.com             1    0.400122
+4   corptoduct4.shockbyte.games             1    0.458000
+5          www.littekencreme.nl             1    0.426483
+6                 careeresl.com             1    0.417289
+7                www.bmisec.com             1    0.416548
+8                 area53.com.br             1    0.469472
+9                ajaxfrance.com             1    0.459782
+10             crestlesunny.com             1    0.472927
+11              ecosolarion.com             1    0.421531
+12              www.landpage.co             1    0.445673
+13                gaughrith.com             1    0.455162
+14             creativegigs.net             1    0.420851
+
+Examples for TP Bin range: 0.4797831 - 0.58368903 , Num. Samples: 183
+                           input  ground truth  prediction
+0               isabellacano.com             1    0.505505
+1                 caviarkelp.com             1    0.495798
+2                   kuberavc.com             1    0.515785
+3                   smartmco.com             1    0.545397
+4                   sa-samba.com             1    0.499236
+5                     qanfin.com             1    0.505225
+6              redacrecenter.org             1    0.555332
+7                 mawcompany.com             1    0.488395
+8               www.estiklal.com             1    0.548034
+9   polrul-85240581.alsalhaj.com             1    0.482257
+10          www.expresstravel.it             1    0.542184
+11           ecscreditrepair.com             1    0.496471
+12                  uzbekart.com             1    0.487085
+13    www.laforestaincantata.dog             1    0.549389
+14              domosmartllc.com             1    0.521439
+
+Examples for TP Bin range: 0.58368903 - 0.68759495 , Num. Samples: 281
                        input  ground truth  prediction
-0                    chat.ru             0    0.890686
-1        api.hikestickers.in             0    0.886232
-2               onlycable.es             0    0.882747
-3   mail.hickorypark-bbq.com             0    0.898491
-4            bmbabbage.co.uk             0    0.871446
-5             magnet.kiev.ua             0    0.883989
-6          midas-network.com             0    0.893381
-7                 lanecc.edu             0    0.896558
-8            metatrader4.com             0    0.894400
-9        hottubcoverpros.com             0    0.872151
-10              hanoi.edu.vn             0    0.872082
-11    heartsfireleathers.com             0    0.881630
-12             capi-ombre.ch             0    0.884095
-13             jlsmzsss.info             0    0.892742
-14           www.wayixia.com             0    0.885290
+0        allthishappened.com             1    0.604911
+1    daotaoquoctedhxd.edu.vn             1    0.623096
+2       www.tesosubastas.org             1    0.644371
+3          www.storstart.com             1    0.677649
+4             www.inbioma.pe             1    0.612063
+5             gb-revolut.com             1    0.653655
+6   meriamstuurfotografie.nl             1    0.667239
+7           tacticalhvac.net             1    0.603656
+8              moqsocial.com             1    0.686818
+9              moqsocial.com             1    0.686818
+10               m42club.com             1    0.594287
+11           wishnquotes.com             1    0.663337
+12          osohealthful.com             1    0.646076
+13               shophgi.com             1    0.602334
+14           aladdinstar.com             1    0.632148
 
-Examples for FP Bin range: 0.90075845 - 0.93383706 , Num. Samples: 31
-                                 input  ground truth  prediction
-0                    evergreensame.com             0    0.906636
-1   autologon.microsoftazuread-sso.com             0    0.906080
-2                     brandedgirls.com             0    0.932306
-3                        shabakaty.com             0    0.916243
-4                    naturalcycles.com             0    0.913313
-5                   hk.af7f.linkit.dev             0    0.900904
-6                    galaxydigital.com             0    0.919322
-7                           ole711.com             0    0.917215
-8                           lawyer.com             0    0.928246
-9                   hanbalmasstech.com             0    0.918848
-10                    gamemonetize.com             0    0.913623
-11                  morningconsult.com             0    0.921385
-12                     jpniaocsydt.org             0    0.901721
-13                   rainbowelec.co.kr             0    0.918791
-14                        creaders.net             0    0.926909
-
-Examples for FP Bin range: 0.93383706 - 0.9669157 , Num. Samples: 45
+Examples for TP Bin range: 0.68759495 - 0.79150087 , Num. Samples: 314
                                     input  ground truth  prediction
-0                   www.indiangaysite.com             0    0.949830
-1                        cq5yofna3emz.com             0    0.961039
-2              imarketing.smadvantage.com             0    0.936440
-3                        prizehoarder.com             0    0.943814
-4                     www.radio-polska.pl             0    0.952098
-5                      track.wrktrack.xyz             0    0.934386
-6                      saveeditonline.com             0    0.949220
-7                   performance-click.com             0    0.964512
-8                     message.zhulong.com             0    0.942824
-9                         eyefeelfree.com             0    0.965426
-10                        com-t-iqiyi.com             0    0.939032
-11                   concur.ais-vidnt.com             0    0.959422
-12                             hkstar.com             0    0.964927
-13  com.xi.zwtianshangm.com.n.num1dns.com             0    0.958984
-14                www.rivendellschool.org             0    0.952425
+0                   therootfoundation.org             1    0.709868
+1                   www.theroyalaegis.com             1    0.696106
+2                          www.zjgsyds.cn             1    0.765590
+3                 graphicommunication.com             1    0.719345
+4                           osrsgames.com             1    0.742855
+5                www.indivisibleheart.com             1    0.723827
+6               rrqeventmobilelegends.com             1    0.721633
+7                        managedevices.cc             1    0.730796
+8                          liderkuota.com             1    0.790152
+9                    ketoneswithmindy.com             1    0.776659
+10                 www.shannonebeling.com             1    0.734715
+11                   o2supportbilling.com             1    0.776781
+12                       remove-device.cc             1    0.764982
+13                     www.nixtechnix.com             1    0.786221
+14  cebuphonly.jrzoutsourcingservices.com             1    0.749541
 
-Examples for FP Bin range: 0.9669157 - 0.9999944 , Num. Samples: 296
-                                   input  ground truth  prediction
-0                        www.sicepat.com             0    0.994377
-1                          boingo.events             0    0.998023
-2    mail.info.virtualization-online.org             0    0.974096
-3                       bk.madamebuzz.fr             0    0.998491
-4                       sahabatnesia.com             0    0.992564
-5             images-origin.wallwiz.link             0    0.998445
-6              www.joyfulhealthyeats.com             0    0.994789
-7                            yqit.com.gu             0    0.999963
-8           southeastasia1-mediap.svc.ms             0    0.979225
-9           www.auduboninternational.org             0    0.999933
-10            mail.yukseliskoleji.com.tr             0    0.999993
-11                  oce.myworkaccess.com             0    0.982829
-12                   www.bostonglobe.com             0    0.999549
-13                             uwe.ac.uk             0    0.996843
-14  performancemanager.successfactors.eu             0    0.999963
+Examples for TP Bin range: 0.79150087 - 0.89540684 , Num. Samples: 334
+                               input  ground truth  prediction
+0             www.hydrolyzeultra.com             1    0.849653
+1   hotelpousadadasaraucarias.com.br             1    0.887290
+2        www.3dsignsmelbourne.com.au             1    0.884936
+3                          hatac.net             1    0.877164
+4                 thescrapescape.com             1    0.807780
+5                       gold-mail.ru             1    0.815649
+6         wilsonparrotfoundation.org             1    0.856035
+7          www.themooregroupofsc.com             1    0.832021
+8                  e-stat-co-jp.info             1    0.886373
+9                     nixtechnix.com             1    0.815634
+10            marketinghelper.com.au             1    0.870068
+11            mytaxreturns-govuk.com             1    0.844636
+12             beautifulattendee.com             1    0.806628
+13              paytouch-free.online             1    0.843577
+14              netflixloginhelp.com             1    0.830842
 
-Examples for FN Bin range: 5.7383745e-06 - 0.16260472 , Num. Samples: 313
+Examples for TP Bin range: 0.89540684 - 0.99931276 , Num. Samples: 1668
                                        input  ground truth  prediction
-0                        www.elsacampini.com             1    0.071840
-1         internetbanking.ninetysbankasi.com             1    0.000523
-2                              csgoequal.com             1    0.000059
-3                         laaksik1.emlnk.com             1    0.000007
-4                              mmp.zaridi.to             1    0.000007
-5                                  sjafc.com             1    0.006155
-6                  mijn.ing.nl.r3lja3mxea.cf             1    0.000085
-7                                 dotilo.com             1    0.000158
-8                         www.bayernlbuk.net             1    0.002987
-9                   sexeducation.atspace.com             1    0.015100
-10                               depgrup.com             1    0.000090
-11                      g8consultores.com.ar             1    0.000374
-12                             ukdvlatax.com             1    0.000595
-13  -371481629042.s3-us-west-2.amazonaws.com             1    0.005684
-14                            o2accounts.com             1    0.008778
-
-Examples for FN Bin range: 0.16260472 - 0.3252037 , Num. Samples: 34
-                                 input  ground truth  prediction
-0            hernandeztreeservices.com             1    0.228097
-1                        lwsovetnyk.ru             1    0.276620
-2             www.todosprodutos.com.br             1    0.270474
-3                    www.washpucks.com             1    0.287281
-4                     www.smspoint.biz             1    0.252704
-5                    info.lionnets.com             1    0.208567
-6                       bahadarpur.org             1    0.187675
-7                    carrytheskull.com             1    0.288351
-8          neighbourhoodwatchcasey.com             1    0.186946
-9                 undeadthreads.com.au             1    0.286252
-10                   aucoindesrues.com             1    0.168562
-11            www.cashflowfxonline.com             1    0.172259
-12  bodegalatinacorp-my.sharepoint.com             1    0.281606
-13                   galeano-store.com             1    0.319252
-14                   emasresources.com             1    0.322427
-
-Examples for FN Bin range: 0.3252037 - 0.48780265 , Num. Samples: 33
-                           input  ground truth  prediction
-0                movemycouch.com             1    0.483017
-1    littleblackdresskingdom.com             1    0.440833
-2      smartenergyinitiative.com             1    0.421929
-3                 autoscurt24.de             1    0.361222
-4             anantaglobal.co.in             1    0.467341
-5           himanshusofttech.com             1    0.421861
-6              mackanthem.com.pe             1    0.458732
-7   undesmaro1937.blogspot.co.uk             1    0.355714
-8               amazerpresce.com             1    0.353877
-9          wybierajmy-wygrana.eu             1    0.415280
-10                   infobcp.com             1    0.434311
-11            www.attemplate.com             1    0.410304
-12                galvarburg.com             1    0.417515
-13          returnsuktax-reb.com             1    0.483303
-14       mobileandmacpoint.co.uk             1    0.479876
-
-Examples for FN Bin range: 0.48780265 - 0.65040165 , Num. Samples: 37
-                         input  ground truth  prediction
-0        bahankuliahonline.com             1    0.613407
-1         www.vjdisplay.com.cn             1    0.489598
-2                 dasktake.com             1    0.541082
-3                   boclog.com             1    0.552461
-4               installusd.com             1    0.619007
-5            dgte.hyperphp.com             1    0.617228
-6             ourevolution.com             1    0.575264
-7             corfuproperty.gr             1    0.507206
-8            iwatchsystems.com             1    0.504257
-9         www.ecotaskforce.com             1    0.617794
-10     kayakthefloridakeys.com             1    0.548003
-11  regulariac.sslblindado.com             1    0.579141
-12               www.ne-pok.hr             1    0.562615
-13              snarkysoap.com             1    0.530398
-14    wg1386611.virtualuser.de             1    0.634511
-
-Examples for FN Bin range: 0.65040165 - 0.8130006 , Num. Samples: 56
-                                     input  ground truth  prediction
-0                          webextractz.com             1    0.812275
-1                     roadtax-overpaid.com             1    0.690235
-2                       perucreartebtl.com             1    0.660292
-3                                 auv95.ru             1    0.666613
-4                 tscit3-my.sharepoint.com             1    0.756394
-5                 servicosnet-prime.online             1    0.797019
-6   accountchckecker-update-now.drpiza.com             1    0.707069
-7                    dynamicdesignsinc.net             1    0.773909
-8                   www19.vemdeofertas.com             1    0.733960
-9              fotografodebodasbolivia.com             1    0.664201
-10      accounts.sanpchat.com.ghasalah.com             1    0.734386
-11                             vhmrics.com             1    0.752213
-12                     kishblackdolphin.ir             1    0.728020
-13                         www.payinur.com             1    0.806341
-14                      glaserpartners.com             1    0.737612
-
-Examples for TP Bin range: 0.8244931 - 0.8595935 , Num. Samples: 17
-                       input  ground truth  prediction
-0           www.rusikona.pro             1    0.841892
-1           nuovaapp2021.com             1    0.828084
-2    www.financialone.com.hk             1    0.833767
-3        taxrebate-ukgov.com             1    0.826855
-4         www.mitadmas11.net             1    0.840091
-5       threecustomers.co.uk             1    0.832363
-6             amezon-fuui.cc             1    0.847114
-7         arkitektonline.com             1    0.824786
-8                galen.co.ke             1    0.857913
-9          www.formbuddy.com             1    0.841383
-10   www.tamircimuslukcu.com             1    0.838979
-11           kokoalets.dx.am             1    0.838399
-12  www.khabargozarisaba.com             1    0.851899
-13                 foliar.pl             1    0.834544
-14           ecosolarion.com             1    0.824493
-
-Examples for TP Bin range: 0.8595935 - 0.89469385 , Num. Samples: 28
-                           input  ground truth  prediction
-0            sn.4yamarketing.com             1    0.883737
-1     jagexbondclaim-rewards.com             1    0.887546
-2    afectadostrustinvesting.com             1    0.877798
-3        modaprivatelabel.com.br             1    0.891466
-4                  3mileride.com             1    0.883470
-5           panthera-medical.com             1    0.877320
-6        mail.mohdnourshahen.com             1    0.870165
-7    afectadostrustinvesting.com             1    0.877798
-8         corewellnesshawaii.com             1    0.870114
-9                      cvacca.ca             1    0.872188
-10           masterenfunnels.com             1    0.860963
-11                    meetme.run             1    0.867648
-12  gz.realestateinkatytexas.com             1    0.876292
-13                    meditur.ro             1    0.875157
-14             evensfreepubg.com             1    0.891941
-
-Examples for TP Bin range: 0.89469385 - 0.92979425 , Num. Samples: 57
-                                   input  ground truth  prediction
-0                          bombi-yarn.ru             1    0.904719
-1                    gov-onlineclaim.com             1    0.911427
-2                    h5r4-accsecnode.com             1    0.896938
-3       royalbank.com.xtudocapela.com.br             1    0.909660
-4                dfshkqbzt.holopokor.com             1    0.919802
-5                    harpiaadventure.com             1    0.913415
-6                      www.faxitalia.com             1    0.921273
-7              tamericans-melhorando.com             1    0.924349
-8                    chirhoprecision.com             1    0.922330
-9                     regularizar-app.tk             1    0.908537
-10  bungjakatingkir.dosesesfacesopio.com             1    0.920813
-11                          margarita.md             1    0.904043
-12                        otropuerto.com             1    0.927858
-13                flourishnetwork.org.za             1    0.897290
-14                       clublazilio.com             1    0.928594
-
-Examples for TP Bin range: 0.92979425 - 0.9648946 , Num. Samples: 89
-                                       input  ground truth  prediction
-0                            go-midasbuy.com             1    0.940949
-1                        thundersoftball.org             1    0.957733
-2               themarbleshop.sharepoint.com             1    0.959678
-3                              anatkumar.com             1    0.942024
-4                            aladdinstar.com             1    0.954259
-5                      myhealthinsquotes.com             1    0.956690
-6              commercialinvestingcenter.com             1    0.961896
-7              blog.venouslaserclinic.com.br             1    0.938522
-8                                 suxury.com             1    0.964564
-9   ww.chatgrupwhatsappjoinkanyuk.wikaba.com             1    0.963315
-10                       kbstitchdesigns.com             1    0.948136
-11                                mxhlbrt.de             1    0.956871
-12                       rotorflygklubben.se             1    0.950931
-13                        vodafonenotice.com             1    0.945711
-14                               voipoid.com             1    0.934430
-
-Examples for TP Bin range: 0.9648946 - 0.999995 , Num. Samples: 2563
-                                       input  ground truth  prediction
-0                                jmcnoack.cl             1    0.999400
-1   -e-w-me-ss-age-po-rt-al.wl.r.appspot.com             1    0.999970
-2                        rosenbloomphoto.com             1    0.997969
-3                  globaldoctorshospital.com             1    0.999965
-4                        lbk-consulta760.com             1    0.997620
-5                     afrotechfoundation.org             1    0.999844
-6                        smcc-cacc.apqcf.com             1    0.999684
-7                                bietgi.info             1    0.999959
-8                        smcc-cacc.cjnyd.com             1    0.999983
-9                         www.nixtechnix.com             1    0.999262
-10                        tmsneurohealth.net             1    0.973825
-11                      netflixloginhelp.com             1    0.999931
-12  p-dot-cedar-code-289917.nn.r.appspot.com             1    0.999992
-13  -dot-cryptic-now-290917.ey.r.appspot.com             1    0.999993
-14  k-dot-cedar-code-289917.nn.r.appspot.com             1    0.999993
+0              secure234.inmotionhosting.com             1    0.988558
+1                              amazon-cg.xyz             1    0.974676
+2          publictvirtusupott.atwebpages.com             1    0.985855
+3         groupbokepwhatsapp.grub-wa23.my.id             1    0.997745
+4                             173.82.129.237             1    0.999034
+5                              csytravels.in             1    0.916754
+6   -e-w-me-ss-age-po-rt-al.wl.r.appspot.com             1    0.999150
+7   update-system-update.esenbogashuttle.com             1    0.991657
+8   .marketplace-item382472.highshark.com.ng             1    0.971108
+9                         xn--tequeon-8za.pe             1    0.983672
+10  ww.secure07statementxx3mnd48.duckdns.org             1    0.992536
+11  dot-solar-vertex-285913.rj.r.appspot.com             1    0.999304
+12                secure.oldschool.com-gf.ru             1    0.979880
+13  aaa7739a2b6d3e596335723b856a435a431db.ph             1    0.997664
+14        halifax.co.uk.app-review-2067.info             1    0.995147
 
 Phishing ULR examples:
-Prediction on url: frgcxtmjzfjpdcusge.top 0.9999919
-Prediction on url: evilmadeupurl.phish 2.8354718e-05
-Prediction on url: evil.madeupurl.phish 4.8922248e-06
+Prediction on url: frgcxtmjawefgrthdcusge.dab 0.10695601
+Prediction on url: evilmadeupurl.phish 0.14836672
+Prediction on url: evil.madeupurl.phish 0.084076315
 
 Safe URL examples:
-Prediction on url: google.com 2.0498774e-05
-Prediction on url: www.google.com 0.000113828835
-Prediction on url: gmail.google.com 6.681633e-06
-Prediction on url: mail.google.com 5.736596e-06
-Prediction on url: tudelft.nl 0.0001385505
-Prediction on url: brightspace.tudelft.nl 0.99950314
-Prediction on url: colab.research.google.com 6.3205575e-06
-Prediction on url: 00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr 0.91619027
+Prediction on url: google.com 0.093087696
+Prediction on url: www.google.com 0.32636034
+Prediction on url: gmail.google.com 0.003183104
+Prediction on url: mail.google.com 0.0030769757
+Prediction on url: tudelft.nl 0.055145584
+Prediction on url: brightspace.tudelft.nl 0.4495974
+Prediction on url: colab.research.google.com 0.002710549
+Prediction on url: 00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr 0.012957305
 ```
