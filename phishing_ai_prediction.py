@@ -120,9 +120,6 @@ print(int_to_text(text_to_int(phishing_domains[0])))
 X_elem_len = [len(domain_name) for domain_name in X]
 print("Longest domain name:", np.max(X_elem_len))
 
-plt.hist(X_elem_len, bins = 100)
-plt.savefig("domain_name_length_histogram.png")
-
 print(sorted(X_elem_len, reverse=True)[:show_top_n])
 # Only 10 urls are longer than 100 characters. So going with that for sequence length.
 max_seq_len = 40
