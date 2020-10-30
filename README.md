@@ -6,6 +6,8 @@ Makes use of Phishtank online valid datasets and Cisco Umbrella top 1 million do
 
 ### Accuracy vs decision threshold:
 The neural network outputs values between 0 and 1. The threshold where the decision is made determines the various detection rates. The rates for various thresholds are shown in the Figure below.
+[Intro.pdf](https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf)
+
 <object data="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf" type="application/pdf" width="700px" height="700px">
     <embed src="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf">
         <p>The detection rates for various thresholds: <a href="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf">Download PDF</a>.</p>
