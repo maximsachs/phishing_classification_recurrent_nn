@@ -2,6 +2,9 @@
 
 Makes use of Phishtank online valid datasets and Cisco Umbrella top 1 million domains list, to train a recurrent neural network to classify domain names as phishing or not phishing.
 
+Run the dataset_downloader.py to download one new sample from phishtank and merge any new urls into the combined dataset. Could be automated using crontab.
+
+
 # Results
 
 ### Accuracy vs decision threshold:

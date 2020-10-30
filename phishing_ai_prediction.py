@@ -2,10 +2,8 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
-import pprint
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing import sequence
-from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
