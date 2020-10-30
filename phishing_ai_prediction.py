@@ -9,10 +9,15 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 import tensorflow as tf
 
+# Some hihg level parameters:
+show_top_n = 20
 random_seed = 16
 
+# Setting the random seed so that the code is repeatable.
 np.random.seed(random_seed)
 
+# Loading the current combined online-valid dataset.
+# Use the dataset_downloader.py to download the current Phishtank online-valid.csv and update the combined dataset.
 print("Phishtank Online Valid Dataset")
 online_valid_df = pd.read_csv("combined_online_valid.csv")
 
@@ -28,14 +33,13 @@ for index, row in online_valid_df.iterrows():
 
 tld_df = pd.Series(dict(tld_count))
 tld_df.sort_values(ascending=False, inplace=True)
-
-show_top_n = 20
-
 tld_print = tld_df.iloc[:show_top_n]
 tld_print["OTHERS"] = tld_df.iloc[show_top_n:].sum()
 
+# Adding the domain names extracted from the phishing urls as a new column.
 online_valid_df["domain_names"] = domain_names
 
+# Loading the whitelist from the 1 million most frequently visited domains.
 whitelist_file_umbrella = "top-1m_umbrella.csv"
 whitelist_df = pd.read_csv(whitelist_file_umbrella, header=None, names=["rank", "domain_names"])
 
@@ -44,43 +48,43 @@ domains_in_whitelist = np.intersect1d(online_valid_df["domain_names"], whitelist
 # Tagging the whitelisted domains as such.
 online_valid_df["in_whitelist"] = np.in1d(online_valid_df["domain_names"], domains_in_whitelist)
 
+# Printing some data examples for reference.
 print(online_valid_df.shape[0], "rows")
 print(online_valid_df.head(20))
 print(tld_print.to_frame(name="TLD Count").transpose().to_string())
 print(f"Percentage of top {show_top_n} tlds: {np.round(100*tld_df.iloc[:show_top_n].sum()/tld_df.sum(), decimals=2)} %")
 
-
+# Printing the top of the whitelist.
 print()
 print("Whitelist file:", whitelist_file_umbrella)
-
 print(whitelist_df.shape[0], "rows")
 print(whitelist_df.head(20))
 
+# How many domains are in both the whitelist and in the phishing urls?
 print()
 print("Number of urls that have domains which are in the whilelist:", online_valid_df["in_whitelist"].sum())
 
-
 # For the dataset, excluding all where the domain name is in the whitelist.
+# Since if the domain is in both lists we cannot tell if its safe or phishing? --> This helps with labeleling the data.
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
 whitelist_df_without_intersection = whitelist_df.loc[np.invert(whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
 # Set oversampling_rate to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
 oversampling_rate = 1.25 
 
+# Getting the array of all phishing domain names.
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
+# Randomly sample a number of safe urls, sice the ratio of classes in the training data should not be too much out of balance.
 whitelist_domains = np.random.choice(whitelist_df_without_intersection["domain_names"].values, size=int(oversampling_rate*len(phishing_domains)), replace=False)
+
+print()
+print("Selected Data Examples:")
+print("Phishing domains:", phishing_domains, len(phishing_domains))
+print("Benign domains:", whitelist_domains, len(whitelist_domains))
 
 # Calling a phishing url 1 and a not-phishing url 0.
 # Using character encoding as the vocabulary.
 # Feeding the url as the sequence.
-
-print()
-print("Selected Data Examples:")
-# print(online_valid_df_without_intersection[["url", "domain_names"]].head(7).to_latex(escape=True))
-# raise
-print("Phishing domains:", phishing_domains, len(phishing_domains))
-print("Benign domains:", whitelist_domains, len(whitelist_domains))
-
 # Creating the samples array and the label array
 print()
 X = list(phishing_domains) + list(whitelist_domains)
@@ -88,6 +92,8 @@ y = [1]*len(phishing_domains) + [0]*len(whitelist_domains)
 sample_weights = [1]*len(phishing_domains) + [1/oversampling_rate]*len(whitelist_domains)
 
 
+# Encoding code/idea from TensorFlow 2.0 Complete Course - Python Neural Networks for Beginners Tutorial freeCodeCamp.org
+# https://colab.research.google.com/drive/1ysEKrw_LE2jMndo1snrZUh5w87LQsCxk#forceEdit=true&sandboxMode=true
 vocab = sorted(set("".join(X)), reverse=True)
 # Inserting a space at index 0, since it is not used in url and will be used for padding the examples.
 vocab.insert(0, " ")
@@ -118,18 +124,22 @@ print(int_to_text(text_to_int(phishing_domains[0])))
 
 # Investigating the domain name length for the combined domain names:
 X_elem_len = [len(domain_name) for domain_name in X]
-print("Longest domain name:", np.max(X_elem_len))
-
 print(sorted(X_elem_len, reverse=True)[:show_top_n])
-# Only 10 urls are longer than 100 characters. So going with that for sequence length.
+
+# Setting some max length for our urls.
 max_seq_len = 40
 print((np.array(X_elem_len) > max_seq_len).sum(), "URLs longer than the cutoff length", max_seq_len)
 
 # Creating test and training datasets
 print()
 
-X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(np.array(X), np.array(y), np.array(sample_weights), test_size=0.15, random_state=random_seed)
+X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(np.array(X), 
+                                                                                               np.array(y),
+                                                                                               np.array(sample_weights),
+                                                                                               test_size=0.15,
+                                                                                               random_state=random_seed)
 
+# Reducing how many samples to print so printouts dont get so big.
 show_top_n = 5
 print(f"Training and testing data: (showing first {show_top_n})")
 print(f"Train data {len(X_train)} samples")
@@ -138,7 +148,6 @@ print(f"Test data {len(X_test)} samples")
 print(list(zip(X_test[:show_top_n], y_test[:show_top_n], sample_weights_test[:show_top_n])))
 
 # Encoding the domain names using the vocabulary
-
 X_train_encoded = [text_to_int(domain_name) for domain_name in X_train]
 X_test_encoded = [text_to_int(domain_name) for domain_name in X_test]
 print()
@@ -157,7 +166,6 @@ print(f"Train data {len(X_train_encoded_padded)} samples, encoded")
 print(list(zip(X_train_encoded_padded[:show_top_n], y_train[:show_top_n])))
 print(f"Test data {len(X_test_encoded_padded)} samples, encoded")
 print(list(zip(X_test_encoded_padded[:show_top_n], y_test[:show_top_n])))
-
 
 
 # Creating the recurrent model for the predictions:
@@ -338,19 +346,8 @@ for gpu in gpus:
 # https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, 64),
-    # tf.keras.layers.LSTM(512, return_sequences=True),
     tf.keras.layers.LSTM(128),
-    # tf.keras.layers.LSTM(128, go_backwards=True),
-    # tf.keras.layers.Dense(512),
-    # tf.keras.layers.Dense(128,activation="tanh"),
-    # tf.keras.layers.Dense(128),
     tf.keras.layers.Dense(128,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(512,activation="tanh"),
-    # tf.keras.layers.Dense(32,activation="sigmoid"),
-    # tf.keras.layers.Dense(32),
-    # tf.keras.layers.Dense(16),
     tf.keras.layers.Dense(1, activation="sigmoid")
 ])
 
@@ -358,13 +355,13 @@ model = tf.keras.Sequential([
 # Compiling the model
 model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['acc'])
 print(model.summary())
+
 class_weight={0: (1/(oversampling_rate+1)), 1: (oversampling_rate/(oversampling_rate+1))}
 print("Using the class weighting:", class_weight)
 # Training the model
 # Setting up callback to monitor the selected loss, and stops training if it doesnt improve for patience-number of epochs.
 # After stopping training will restore the weights from the best iteration on this value encountered so far.
 early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor="val_acc", patience=4, restore_best_weights=True)
-# history = model.fit(X_train_encoded_padded, y_train, epochs=100, validation_data=(X_test_encoded_padded, y_test), sample_weight=sample_weights_train, callbacks=[early_stopping_callback])
 history = model.fit(X_train_encoded_padded, y_train,
                     epochs=100,
                     validation_data=(X_test_encoded_padded, y_test),
@@ -372,17 +369,19 @@ history = model.fit(X_train_encoded_padded, y_train,
                     sample_weight=sample_weights_train,
                     callbacks=[early_stopping_callback])
 
+# Model built in evaluate
 results = model.evaluate(X_test_encoded_padded, y_test)
 print(results)
+
+# Custom evaluate
 best_threshold = threshold_evaluation_plotter(X_test_encoded_padded, y_test)
 mean_prediction = evaluate_nn_model(X_test_encoded_padded, y_test, threshold=best_threshold)
 
-
+# Testing some handcrafted examples to see how it does.
 print("\nPhishing ULR examples:")
-predict_url("frgcxtmjzfjpdcusge.top")
+predict_url("frgcxtmjawefgrthdcusge.dab")
 predict_url("evilmadeupurl.phish")
 predict_url("evil.madeupurl.phish")
-
 
 print("\nSafe URL examples:")
 predict_url("google.com")
