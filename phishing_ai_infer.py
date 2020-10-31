@@ -1,8 +1,11 @@
+import os
+# Printing only fatal errors from the tensorflow module.
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  
 import pandas as pd
 import numpy as np
-from tensorflow.keras.preprocessing import sequence
-import tensorflow as tf
 import json
+import tensorflow as tf
+from tensorflow.keras.preprocessing import sequence
 
 class phishing_ai():
     """
@@ -35,7 +38,7 @@ if __name__ == "__main__":
     phishing_ai = phishing_ai()
 
     # Showing the summary of the loaded model:
-    phishing_ai.model.summary()
+    # phishing_ai.model.summary()
 
     # Making an example prediction
     url = "mail.google.com"
