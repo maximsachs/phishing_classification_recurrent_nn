@@ -1,0 +1,6 @@
+*.pyc
+*.pem
+*.log
+*.pycache_test/*
+*.pytest_cache/*
+*.cache*
