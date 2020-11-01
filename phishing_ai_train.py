@@ -11,7 +11,10 @@ import json
 # Some hihg level parameters:
 show_top_n = 20
 random_seed = 16
+max_seq_len = 40
 model_name='phishing_detection_model'
+# Set oversampling_rate to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
+oversampling_rate = 1.25 
 
 # Setting the random seed so that the code is repeatable.
 np.random.seed(random_seed)
@@ -69,9 +72,6 @@ print("Number of urls that have domains which are in the whilelist:", online_val
 online_valid_df_without_intersection = online_valid_df.loc[online_valid_df['in_whitelist'] == False]
 whitelist_df_without_intersection = whitelist_df.loc[np.invert(whitelist_df['domain_names'].isin(domains_in_whitelist))]
 
-# Set oversampling_rate to 1 to have the positive samples match the phishing samples. Set to greater than 1 to use more negative samples.
-oversampling_rate = 1.25 
-
 # Getting the array of all phishing domain names.
 phishing_domains = online_valid_df_without_intersection["domain_names"].values
 # Randomly sample a number of safe urls, sice the ratio of classes in the training data should not be too much out of balance.
@@ -128,7 +128,6 @@ X_elem_len = [len(domain_name) for domain_name in X]
 print(sorted(X_elem_len, reverse=True)[:show_top_n])
 
 # Setting some max length for our urls.
-max_seq_len = 40
 print((np.array(X_elem_len) > max_seq_len).sum(), "URLs longer than the cutoff length", max_seq_len)
 
 # Creating test and training datasets
