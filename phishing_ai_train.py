@@ -346,7 +346,7 @@ for gpu in gpus:
 # https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, 64),
-    tf.keras.layers.LSTM(128),
+    tf.keras.layers.LSTM(96),
     tf.keras.layers.Dense(128,activation="tanh"),
     tf.keras.layers.Dense(1, activation="sigmoid")
 ])
