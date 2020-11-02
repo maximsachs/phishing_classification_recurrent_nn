@@ -30,393 +30,394 @@ The neural network outputs values between 0 and 1. The threshold where the decis
 ### Example output
 
 ```
-Best performance at threshold: 0.7555276381909548
-Calculated 7695 predictions with a mean value of 0.4602312743663788
-Evaluating using threshold 0.7555276381909548
-Cut-off threshold: 0.7555
-Evaluation counts: {'TN': 3902, 'FP': 463, 'FN': 395, 'TP': 2935}
-+-----------------+----------------+--------------------+
-| Accuracy 88.85% | Predicted safe | Predicted phishing |
-+-----------------+----------------+--------------------+
-|   Not phishing  |    TN: 3902    |      FP: 463       |
-|                 |  NPV: 90.808%  |    FDR: 13.626%    |
-|                 |  TNR: 89.393%  |    FPR: 10.607%    |
-|   Is phishing   |    FN: 395     |      TP: 2935      |
-|                 |  FOR: 9.192%   |    PPV: 86.374%    |
-|                 |  FNR: 11.862%  |    TPR: 88.138%    |
-+-----------------+----------------+--------------------+
+Best performance at threshold: 0.5655778894472362
+Calculated 7876 predictions with a mean value of 0.4562220573425293
+Evaluating using threshold 0.5655778894472362
+Cut-off threshold: 0.5656
+Evaluation counts: {'TN': 3891, 'FP': 506, 'FN': 435, 'TP': 3044}
++------------------+----------------+--------------------+
+| Accuracy 88.052% | Predicted safe | Predicted phishing |
++------------------+----------------+--------------------+
+|   Not phishing   |    TN: 3891    |      FP: 506       |
+|                  |  NPV: 89.945%  |    FDR: 14.254%    |
+|                  |  TNR: 88.492%  |    FPR: 11.508%    |
+|   Is phishing    |    FN: 435     |      TP: 3044      |
+|                  |  FOR: 10.055%  |    PPV: 85.746%    |
+|                  |  FNR: 12.504%  |    TPR: 87.496%    |
++------------------+----------------+--------------------+
 
-Examples for TN Bin range: 6.6296548e-06 - 0.15104796 , Num. Samples: 3620
-                                       input  ground truth  prediction
-0                                dlogixs.com             0    0.002675
-1               fairprice.api.useinsider.com             0    0.000032
-2                           datafield-hk.com             0    0.022040
-3   -odc.samsungapps.com.gslb.cdnetworks.net             0    0.000026
-4                          en.touhouwiki.net             0    0.111190
-5                              v1.ayjpalf.ru             0    0.000008
-6                           konnectodial.com             0    0.051903
-7                                     kdo.de             0    0.000515
-8                           vra.outbrain.com             0    0.000021
-9                               oodleimg.com             0    0.085622
-10                        mail.valorunico.cl             0    0.000055
-11                            m24.kjecppw.cc             0    0.000008
-12                            concent.com.br             0    0.000011
-13                           shop.jisuapp.cn             0    0.000031
-14               identity.ciam.refinitiv.net             0    0.000007
+Examples for TN Bin range: 7.317396e-06 - 0.11298742 , Num. Samples: 3462
+                                input  ground truth  prediction
+0                llnw.daps.nbcuni.com             0    0.000118
+1              speedtest.wispwest.net             0    0.000050
+2                     m13.rsefukf.com             0    0.000032
+3                     m15.dcbxlrj.org             0    0.000008
+4   edge-091.sgsin.icloud-content.com             0    0.000015
+5                   mail.novuscom.net             0    0.000012
+6                          xghelp.com             0    0.005918
+7                linuxfromscratch.org             0    0.024444
+8      r1.sn-5ualdn7y.googlevideo.com             0    0.000011
+9                     m40.dyopshw.com             0    0.000246
+10        gaplecdn.aliyun.joyours.com             0    0.000438
+11                       cdn.epica.ai             0    0.000028
+12                  siorc.xfinity.com             0    0.000428
+13                   110.mimilcnf.pro             0    0.000041
+14                        aslroma1.it             0    0.004463
 
-Examples for TN Bin range: 0.15104796 - 0.30208927 , Num. Samples: 102
+Examples for TN Bin range: 0.11298742 - 0.22596753 , Num. Samples: 157
+                         input  ground truth  prediction
+0                   reamaze.io             0    0.188346
+1               www.wisksl.com             0    0.134943
+2             pollosgar.com.co             0    0.183440
+3           hm.vuicungdafa.com             0    0.161075
+4      mail.guoceratile.com.my             0    0.133046
+5                      ggwp.id             0    0.191724
+6             oceans-nadia.com             0    0.149921
+7               jieqinwang.com             0    0.148553
+8               v.lsttnews.com             0    0.141278
+9   liveme.zgsgllive.linkv.fun             0    0.191640
+10         nws.etemavrajoip.fr             0    0.136429
+11             portforward.com             0    0.122953
+12     98kz-alternate.app.link             0    0.186109
+13               emailsrvr.com             0    0.213246
+14           static.f-list.net             0    0.124085
+
+Examples for TN Bin range: 0.22596753 - 0.33894762 , Num. Samples: 105
                        input  ground truth  prediction
-0                zdwcxfe.com             0    0.183455
-1               labo-team.fr             0    0.160546
-2             interthinx.com             0    0.157220
-3                 datanet.iq             0    0.219580
-4       mail.asiaertebat.com             0    0.194294
-5              cookiepro.com             0    0.256896
-6         theedgemarkets.com             0    0.165590
-7         www.fednetbank.com             0    0.186842
-8              www.msq88.com             0    0.254356
-9   www.downiestatistics.com             0    0.196170
-10           produitlive.com             0    0.178915
-11          euemazure.ey.com             0    0.283395
-12           hotelrunner.com             0    0.291902
-13                 abramo.it             0    0.176437
-14           newcampaigns.pl             0    0.283066
+0           fastcomments.com             0    0.324313
+1             elsenbruch.com             0    0.231270
+2                 zahori.com             0    0.272963
+3             alex.kakao.com             0    0.263239
+4   www.svfree.svgame168.com             0    0.228486
+5          kashra-server.com             0    0.301930
+6      mail.elcharcutero.com             0    0.326268
+7           stratoserver.net             0    0.256581
+8          votesouthwell.com             0    0.320887
+9             www.amboss.com             0    0.275090
+10             mx.interia.pl             0    0.274614
+11             myconvene.com             0    0.240418
+12                pchouse.gr             0    0.324463
+13          intraplanner.com             0    0.272231
+14         elnacional.com.do             0    0.330957
 
-Examples for TN Bin range: 0.30208927 - 0.4531306 , Num. Samples: 68
+Examples for TN Bin range: 0.33894762 - 0.45192775 , Num. Samples: 73
+                     input  ground truth  prediction
+0   acdevelopmentgroup.com             0    0.353133
+1              aaronsw.com             0    0.406117
+2              gazt.gov.sa             0    0.386374
+3              yhcgift.com             0    0.418845
+4                javdb.com             0    0.354495
+5     www.trainenquiry.com             0    0.419734
+6       www.devexpress.com             0    0.373720
+7      anferingenieria.com             0    0.438848
+8       fusion-manager.com             0    0.374282
+9               mqnrqbl.in             0    0.432225
+10    citi.bridgetrack.com             0    0.439842
+11     xlog-va.tiktokv.com             0    0.445081
+12                 ghnd.fr             0    0.371937
+13   billing.oknotify2.com             0    0.382837
+14              300400.net             0    0.353102
+
+Examples for TN Bin range: 0.45192775 - 0.56490785 , Num. Samples: 93
                                        input  ground truth  prediction
-0                             alahmadani.com             0    0.442474
-1                            cdcservices.com             0    0.405938
-2                                 xialwqe.ru             0    0.372986
-3                             hon-win.com.cn             0    0.341402
-4                                zuowen8.com             0    0.428328
-5             credleaderboard.firebaseio.com             0    0.365162
-6                           cujonevilofe.com             0    0.397637
-7                        bokormas.dyndns.biz             0    0.314557
-8                        estes-equipment.com             0    0.448628
-9                       yasamboyuogrenim.com             0    0.321593
-10                       locke.neobright.net             0    0.305679
-11                         edge.udmserve.net             0    0.359595
-12                                   udmr.ru             0    0.406787
-13                         www.tagserve.asia             0    0.407259
-14  pr1m08phcga89.s3.us-west-2.amazonaws.com             0    0.441766
+0                  sfd.et0978.epichosted.com             0    0.529685
+1                        surgicalscience.com             0    0.559815
+2                            privatemail.com             0    0.485508
+3                          asemanfredonia.it             0    0.474472
+4                                  mevris.io             0    0.474573
+5                         xianghuanzhang.com             0    0.546445
+6                         www.madridhifi.com             0    0.490822
+7                mail.motivedynamicsmgmt.com             0    0.465295
+8         user-media-upload.renderforest.com             0    0.538933
+9                                 ffquan.com             0    0.551031
+10                   kaptivoapi.kaptivo.live             0    0.515401
+11                         scipublisherj.com             0    0.494632
+12  08c374edcb87ab5cbdab24dc9.js.ubembed.com             0    0.462961
+13                     fashioneditorials.com             0    0.486268
+14                             shoplazza.com             0    0.484051
 
-Examples for TN Bin range: 0.4531306 - 0.60417193 , Num. Samples: 45
-                            input  ground truth  prediction
-0                   uhcarcade.com             0    0.543132
-1      medidor.turbonetssp.com.br             0    0.576397
-2           candy.jp-brothers.com             0    0.502245
-3                lingtianmold.com             0    0.562866
-4                     sothuchi.vn             0    0.455938
-5                  mvhospital.net             0    0.518542
-6         denbtiepd2.de.aosrv.com             0    0.525436
-7       c2r7b7xk.v1d.pkoplink.com             0    0.548341
-8             pendleton.sspinc.io             0    0.597321
-9   examnet-176208.firebaseio.com             0    0.531097
-10          appliedbiosystems.com             0    0.602869
-11       podcastfeeds.nbcnews.com             0    0.564579
-12              firsatlarshop.com             0    0.507331
-13             isdschoolsmail.org             0    0.496355
-14       mail.helairporttaksi.com             0    0.496934
+Examples for FP Bin range: 0.5741874 - 0.6593455 , Num. Samples: 58
+                      input  ground truth  prediction
+0        delta-searches.com             0    0.610190
+1         luckyqueenpro.com             0    0.612061
+2               pollmann.at             0    0.628621
+3                   zbj.com             0    0.642035
+4              zastatic.com             0    0.598736
+5   freeonlineconverter.net             0    0.639440
+6     freemalaysiatoday.com             0    0.634647
+7            www.silive.com             0    0.574187
+8       ariannelingerie.com             0    0.605711
+9     go.publisher-news.com             0    0.636007
+10      seancodynetwork.com             0    0.637383
+11           indihome.co.id             0    0.583247
+12            hortimail.com             0    0.647075
+13          ljlpeinture.com             0    0.586821
+14       hiddencamstube.com             0    0.614998
 
-Examples for TN Bin range: 0.60417193 - 0.75521326 , Num. Samples: 66
-                                       input  ground truth  prediction
-0                      www.thelivemirror.com             0    0.607597
-1      uswstorage.oss-us-west-1.aliyuncs.com             0    0.730624
-2                           tintucketoan.com             0    0.735861
-3                                 gyrxttt.su             0    0.616638
-4                               aermacchi.it             0    0.611230
-5                                   oliac.pk             0    0.642718
-6                            adextelecom.com             0    0.651698
-7                             tuviglobal.com             0    0.677120
-8                        freightinvestor.com             0    0.697711
-9                           thefilmstage.com             0    0.731003
-10                             rmbenasse.com             0    0.653530
-11                               first-mg.de             0    0.700918
-12  esumesearchstorage.blob.core.windows.net             0    0.747432
-13                            sclubeuropa.it             0    0.648071
-14                                ins.com.tr             0    0.752853
-
-Examples for FP Bin range: 0.7574164 - 0.8059311 , Num. Samples: 14
-                             input  ground truth  prediction
-0                        koryu.com             0    0.777464
-1                report.365you.com             0    0.797975
-2       webmail.anforaformacion.es             0    0.790950
-3                       mfydunx.ru             0    0.763983
-4                mailout.ns01.info             0    0.794748
-5                        cncrk.com             0    0.766324
-6                     tir2bolt.xyz             0    0.760481
-7             dpmailbu.doteasy.com             0    0.767257
-8   ep-us-west-wa-02.flowroute.com             0    0.758322
-9                     digopaul.com             0    0.757416
-10                 www.acompli.com             0    0.780901
-11                    mamalisa.com             0    0.803154
-12                    gearhost.com             0    0.786216
-13                ozerparkotel.com             0    0.779360
-
-Examples for FP Bin range: 0.8059311 - 0.8544458 , Num. Samples: 28
-                              input  ground truth  prediction
-0   languagelearningwithnetflix.com             0    0.842674
-1                        telecom.mu             0    0.813443
-2           bigmooseproductions.com             0    0.836675
-3                hogwartsishere.com             0    0.819805
-4                 rateyourmusic.com             0    0.840521
-5                     huflit.edu.vn             0    0.836330
-6                 johnhenrymahr.com             0    0.811060
-7          teamobjectifaventure.com             0    0.829121
-8                   global-roam.com             0    0.851315
-9               amateurgayclips.com             0    0.841719
-10                 amctextil.com.br             0    0.810374
-11                   zenshin.com.ph             0    0.843911
-12       www.hangchinhhanggiare.com             0    0.839857
-13                www.desir-cam.com             0    0.837189
-14        amandabeautycenter.com.br             0    0.838762
-
-Examples for FP Bin range: 0.8544458 - 0.9029605 , Num. Samples: 31
+Examples for FP Bin range: 0.6593455 - 0.74450356 , Num. Samples: 60
                         input  ground truth  prediction
-0                    flair.co             0    0.859403
-1   playstationexperience.net             0    0.868899
-2             www.yjcf360.com             0    0.871511
-3    ookla.fastxbroadband.com             0    0.870116
-4           www.areafokus.com             0    0.876992
-5              optimalbux.com             0    0.874091
-6                  ak-ort.com             0    0.879341
-7        brisbanetimes.com.au             0    0.864254
-8              oaeeckakci.com             0    0.891409
-9         stonks.widgetbot.io             0    0.879586
-10              baicizhan.org             0    0.890082
-11     down.zhilingshidai.com             0    0.870641
-12                  cicese.mx             0    0.855197
-13        weimiaocaishang.com             0    0.884302
-14                wakemed.org             0    0.865121
+0            www.senate.go.th             0    0.682710
+1           blackhole9999.com             0    0.671924
+2            xnxx.tubekek.com             0    0.682402
+3                   nasoe.org             0    0.725112
+4               local.bark.us             0    0.684137
+5              www.netapp.com             0    0.741023
+6           www.molottery.com             0    0.689571
+7              satismeter.com             0    0.736355
+8           mqsrkvcpyzvnw.com             0    0.742406
+9          bbbbbbbb.846846.de             0    0.680710
+10              bsh-group.com             0    0.696653
+11               dlr-hatc.com             0    0.683883
+12          bibliotecasma.com             0    0.731776
+13  bollingplasticsurgery.com             0    0.733331
+14            ystrationa.info             0    0.741842
 
-Examples for FP Bin range: 0.9029605 - 0.9514752 , Num. Samples: 63
+Examples for FP Bin range: 0.74450356 - 0.82966167 , Num. Samples: 68
+                                input  ground truth  prediction
+0   studyinsweden.easyvirtualfair.com             0    0.801279
+1        mail.veiligheidsbeleving.com             0    0.751713
+2                       fotoaziti.com             0    0.805599
+3                         nettv4u.com             0    0.813323
+4             live.outplaygamekit.com             0    0.824369
+5                uiprxlbgfrxaxrwnh.in             0    0.746816
+6            recaptcha.bittorrent.com             0    0.823070
+7                       www.fun2u.biz             0    0.762361
+8                 freightinvestor.com             0    0.747800
+9                    servizioemail.it             0    0.809356
+10         kaiserswerther-diakonie.de             0    0.824186
+11                   www.europcar.com             0    0.800409
+12                   www.pulsapay.com             0    0.809266
+13                     ecoserveis.net             0    0.778508
+14                         lkr5k85.cn             0    0.769014
+
+Examples for FP Bin range: 0.82966167 - 0.9148197 , Num. Samples: 97
+                          input  ground truth  prediction
+0              b6b4rhsbdawj.com             0    0.901391
+1    incrediblerugsanddecor.com             0    0.838826
+2                  ramweb.co.za             0    0.874516
+3            cbt-charpentier.fr             0    0.841216
+4              beerrightnow.com             0    0.859271
+5                 bdtsales.best             0    0.857589
+6      boehringer-ingelheim.com             0    0.872133
+7       www.dernieredemeure.com             0    0.908550
+8                  reco.wynk.in             0    0.863313
+9             acielcolombia.com             0    0.873488
+10     www.alaskaredkitchen.com             0    0.911707
+11  lyncdiscover.wellsfargo.com             0    0.832653
+12         www.jobdiagnosis.com             0    0.890343
+13         zh-hk.guitarians.com             0    0.898340
+14  mail.kontaktlinsen-radar.de             0    0.882129
+
+Examples for FP Bin range: 0.9148197 - 0.9999778 , Num. Samples: 222
+                              input  ground truth  prediction
+0                  gampangcod.my.id             0    0.998248
+1             kath-dekanat-alzey.de             0    0.987271
+2                www.jdsports.co.uk             0    0.997600
+3                    delightfull.eu             0    0.966502
+4           bipolaraustralia.org.au             0    0.924600
+5                  essentialhome.eu             0    0.999747
+6   consentmanager.mgr.consensu.org             0    0.967583
+7         koodomobile.telus.digital             0    0.997511
+8             bomenservice-zuid.com             0    0.916765
+9                  virtuallawyer.se             0    0.988618
+10                     redcalfs.com             0    0.986578
+11                          baua.fr             0    0.983905
+12     www.childsplayclothing.co.uk             0    0.999968
+13                           wdm.pl             0    0.940031
+14                    cimtav.com.tr             0    0.997630
+
+Examples for FN Bin range: 8.67373e-06 - 0.112897925 , Num. Samples: 238
+                                   input  ground truth  prediction
+0                             moxisq.com             1    0.001682
+1                      mail-generali.com             1    0.000243
+2                    stearncommunily.com             1    0.029782
+3                            newmy-3.com             1    0.007560
+4                                shrt.es             1    0.012051
+5                         elgabalawy.com             1    0.008782
+6                                 hmp.me             1    0.043992
+7          nice.constantcontactsites.com             1    0.000962
+8             dubailuxurypropertiess.com             1    0.020251
+9                          unnobzava.net             1    0.009643
+10       selfish-cheese.aerobaticapp.com             1    0.005296
+11  claro-controle-downloader.m4u.com.br             1    0.011110
+12                        arcomindia.com             1    0.059921
+13             e.t.s.interac.ca-app.club             1    0.000054
+14                          donghuong.uk             1    0.002262
+
+Examples for FN Bin range: 0.112897925 - 0.22578716 , Num. Samples: 44
+                                       input  ground truth  prediction
+0                      binarybenliveload.com             1    0.213511
+1                             mtfirewood.com             1    0.186709
+2                             propress.co.uk             1    0.173334
+3          www.videosoy.reachhealthylife.com             1    0.135371
+4                       axiomatickidneys.org             1    0.179086
+5               codedrop.thevisionpoints.com             1    0.201330
+6                            zinextworld.com             1    0.148280
+7                          getyourtx-tdy.com             1    0.147874
+8                             mtfirewood.com             1    0.186709
+9   ge-id-7819108955.sycoexportimportltd.com             1    0.145995
+10                www.scuolascigressoney.net             1    0.196822
+11                         losmentirosos.com             1    0.160719
+12                               ipp-inc.com             1    0.125211
+13                              wikiform.org             1    0.116855
+14                            careplayit.vip             1    0.129922
+
+Examples for FN Bin range: 0.22578716 - 0.33867642 , Num. Samples: 50
+                       input  ground truth  prediction
+0          mackanthem.com.pe             1    0.306885
+1             365playing.com             1    0.301153
+2      elhogarproperties.com             1    0.264287
+3             pandaimath.com             1    0.276507
+4      playfirstoftheday.com             1    0.312422
+5          expertcarzone.com             1    0.282245
+6   sexeducation.atspace.com             1    0.239057
+7         techsysnigeria.com             1    0.235290
+8            jeffreybcam.net             1    0.230963
+9          www.coderllci.com             1    0.299572
+10            galvarburg.com             1    0.226562
+11        contraprova.com.br             1    0.292125
+12            pubgmdaily.com             1    0.299808
+13            pkwmobilede.de             1    0.320379
+14            7colours.co.za             1    0.230266
+
+Examples for FN Bin range: 0.33867642 - 0.45156565 , Num. Samples: 52
+                                       input  ground truth  prediction
+0                             lassolinks.com             1    0.368287
+1               marie02zue.azurewebsites.net             1    0.381409
+2                          tomeigosto.com.br             1    0.363083
+3                                   gradi.ba             1    0.434554
+4                              foamnflow.com             1    0.395296
+5                                  kisa.link             1    0.339635
+6                      bizbizeturkiyenim.com             1    0.359583
+7   asecure-messagesystem.thenailcabin.co.uk             1    0.372895
+8                     autodiscover.gre.ac.uk             1    0.429600
+9                             snarkysoap.com             1    0.350943
+10                         aegisredmedia.com             1    0.438507
+11                   freey-joingrub.otzo.com             1    0.381696
+12                   graphicommunication.com             1    0.410395
+13                              gold-mail.ru             1    0.409111
+14          redirectlyoseven.firebaseapp.com             1    0.444133
+
+Examples for FN Bin range: 0.45156565 - 0.5644549 , Num. Samples: 50
+                                       input  ground truth  prediction
+0   NvbQ==Memberservices&amp;legalshieldcorp             1    0.473352
+1                       backyarddelivery.com             1    0.559786
+2                        kbstitchdesigns.com             1    0.457322
+3                     orthodoxresearcher.com             1    0.519094
+4                           fedexvoyager.com             1    0.479571
+5                         woodysportsbar.com             1    0.510820
+6                  globaldoctorshospital.com             1    0.525911
+7                        akannitoyegbola.com             1    0.454716
+8                                fdriqtbt.cn             1    0.523340
+9                     kellijophotography.com             1    0.502783
+10                         plasticmonkey.com             1    0.487777
+11                        www.bayernlbuk.net             1    0.563618
+12                   www.ktplasmachinery.com             1    0.476686
+13                            pochegroup.com             1    0.528044
+14                            modesuites.com             1    0.471518
+
+Examples for TP Bin range: 0.5688994 - 0.65511745 , Num. Samples: 66
+                          input  ground truth  prediction
+0            remnegocios.com.br             1    0.584870
+1   neighbourhoodwatchcasey.com             1    0.569869
+2      find-yourprofithere.life             1    0.633644
+3               www.jfteabd.com             1    0.592988
+4                www.mktbtk.com             1    0.579223
+5         austinbeautyguide.com             1    0.646723
+6              www.hoomokef.com             1    0.653069
+7              essexminibus.com             1    0.588611
+8                  olivaspa.com             1    0.624943
+9              www.denartcc.org             1    0.572421
+10                 tarelka67.ru             1    0.607841
+11                   jagex.club             1    0.638270
+12  www.tinavegaphotography.com             1    0.631984
+13                  v-upd.co.uk             1    0.586614
+14                  byoko.co.kr             1    0.603089
+
+Examples for TP Bin range: 0.65511745 - 0.7413355 , Num. Samples: 65
+                          input  ground truth  prediction
+0            www.wonderstore.it             1    0.688639
+1               pp-giftcard.com             1    0.715353
+2                      ehan.org             1    0.718887
+3            bonamourmarket.com             1    0.726458
+4                mansdragon.com             1    0.686235
+5   ded5441.inmotionhosting.com             1    0.706312
+6                  dasktake.com             1    0.672902
+7               patchcracks.com             1    0.663025
+8                tierretyr.live             1    0.659768
+9                   pubgner.com             1    0.700133
+10                viewfbapp.com             1    0.721883
+11                profalsam.com             1    0.730803
+12           alealtaseguros.com             1    0.725690
+13            limited-verify.me             1    0.681457
+14                pubgmyace.com             1    0.711182
+
+Examples for TP Bin range: 0.7413355 - 0.8275535 , Num. Samples: 110
+                                  input  ground truth  prediction
+0                     www.arrowcase.com             1    0.777720
+1                          brighant.com             1    0.746563
+2                      amazerpresce.com             1    0.813245
+3             essentialshoppingmall.com             1    0.824800
+4          privateinvestigatormilan.com             1    0.819198
+5                    markareklamevi.com             1    0.814238
+6                       epay-paxful.com             1    0.762931
+7                  sakkiswonderland.com             1    0.787093
+8                        hutoknepper.de             1    0.807550
+9                       epay-paxful.com             1    0.762931
+10                       ddotamoney.com             1    0.796305
+11                      www.payinur.com             1    0.783428
+12                     valeexpressa.com             1    0.742105
+13  m.facebok-item-84372.vattrustbd.com             1    0.812274
+14                      zeebracross.com             1    0.788122
+
+Examples for TP Bin range: 0.8275535 - 0.91377157 , Num. Samples: 185
                          input  ground truth  prediction
-0                  espalais.fr             0    0.951184
-1          trimun.lagivado.com             0    0.932640
-2         theforanexchange.com             0    0.937796
-3                turdayma.info             0    0.945138
-4                hostcenter.dk             0    0.933696
-5                  america.net             0    0.916790
-6              mail.pyramis.fi             0    0.931681
-7                amazonpmi.com             0    0.947179
-8   domainsregistrationapi.com             0    0.929311
-9               resdingtone.me             0    0.949165
-10                    youla.io             0    0.913650
-11                 aerostar.ro             0    0.909746
-12          www.extremeplus.it             0    0.949173
-13            affinbank.com.my             0    0.927267
-14               stockstar.com             0    0.936368
+0                   net-eco.fr             1    0.841986
+1          ecscreditrepair.com             1    0.881374
+2              www.rehrlbau.de             1    0.842446
+3            destructoring.com             1    0.879459
+4                    ucxuc.com             1    0.872591
+5   unionheightsresidental.com             1    0.841180
+6    liberbankos-prestades.com             1    0.908444
+7          chirhoprecision.com             1    0.908011
+8         gandjministorage.com             1    0.866434
+9      ebay-payment-issues.com             1    0.847162
+10       ruakunten.kadnanu.top             1    0.831892
+11             boconceptla.com             1    0.883810
+12       bahankuliahonline.com             1    0.851976
+13      corewellnesshawaii.com             1    0.848730
+14            fghjh.uioiuo.xyz             1    0.850209
 
-Examples for FP Bin range: 0.9514752 - 0.99998987 , Num. Samples: 326
-                           input  ground truth  prediction
-0                majadahonda.org             0    0.999375
-1      clientfiles.tmpwebeng.com             0    0.999911
-2          www.orientfreight.com             0    0.994013
-3                    panduit.com             0    0.999745
-4          bomenservice-zuid.com             0    0.999684
-5              salfamontajes.com             0    0.998994
-6       essays-termpapers2go.com             0    0.987707
-7            first-resources.com             0    0.964477
-8   whatchristianswanttoknow.com             0    0.999529
-9                     alimc3.top             0    0.999864
-10              storeimaging.com             0    0.999724
-11               securelinks.net             0    0.998143
-12            files.keyreply.com             0    0.994470
-13                     goaaa.com             0    0.973565
-14     redhillchurchofchrist.org             0    0.999557
-
-Examples for FN Bin range: 8.355906e-06 - 0.14803024 , Num. Samples: 275
-                         input  ground truth  prediction
-0        www.man1bantul.sch.id             1    0.002277
-1   mysite.plexusworldwide.com             1    0.000027
-2              accesso-mps.com             1    0.000083
-3                betqiuqiu.com             1    0.001756
-4                medhermes.net             1    0.003648
-5              wwwfacebook.org             1    0.021296
-6                 taengball.co             1    0.056845
-7                 iokainle.fun             1    0.057070
-8              vki.vipcentr.ru             1    0.014383
-9               fusionfitn.com             1    0.004113
-10           www.34.miktd7.com             1    0.001106
-11                   cornia.in             1    0.028525
-12           battlegrownds.com             1    0.003919
-13         baltijosloto.opo.lt             1    0.012160
-14   e.t.s.interac.ca-app.club             1    0.015846
-
-Examples for FN Bin range: 0.14803024 - 0.2960521 , Num. Samples: 36
+Examples for TP Bin range: 0.91377157 - 0.9999896 , Num. Samples: 2613
                                        input  ground truth  prediction
-0                          amazonm-thtru.pro             1    0.212129
-1                                 734231.com             1    0.206223
-2                          jamupasakbumi.com             1    0.159967
-3                               laserland.by             1    0.165746
-4                            rsrsurprise.com             1    0.185366
-5                             techinfobd.net             1    0.193354
-6                          techasteroids.com             1    0.268435
-7              billingsmontanarealestate.com             1    0.194124
-8   dauthowa.fra1.cdn.digitaloceanspaces.com             1    0.158757
-9                  dvla-vehicletaxrefund.com             1    0.251008
-10                               kent.com.bd             1    0.158588
-11                       pixelbenchmarks.com             1    0.174780
-12                          baanlaesuans.com             1    0.262554
-13                              pranavida.cl             1    0.158021
-14                                734231.com             1    0.206223
-
-Examples for FN Bin range: 0.2960521 - 0.44407398 , Num. Samples: 24
-                            input  ground truth  prediction
-0          www.quantumfitness.com             1    0.361186
-1                 aladdinstar.com             1    0.424780
-2                     rubysoap.hk             1    0.352645
-3            ketoneswithmindy.com             1    0.413272
-4                securenet-pp.com             1    0.347048
-5             harpiaadventure.com             1    0.307106
-6   microsoft-excel.kr.jaleco.com             1    0.305564
-7           havantsurveyors.co.uk             1    0.307383
-8       www.cr.mnfg.shwxtfood.com             1    0.310780
-9       emsi-lobo.firebaseapp.com             1    0.416162
-10                   smartmco.com             1    0.354033
-11       www.duffywholesalers.com             1    0.438219
-12           cesta-americanas.com             1    0.388964
-13                jeffreybcam.net             1    0.394956
-14              www.faxitalia.com             1    0.347434
-
-Examples for FN Bin range: 0.44407398 - 0.59209585 , Num. Samples: 28
-                               input  ground truth  prediction
-0                       uzbekart.com             1    0.533469
-1                          ucxuc.com             1    0.550148
-2                org-nr.yolasite.com             1    0.552236
-3                  emasresources.com             1    0.590512
-4                 newdetails-3.world             1    0.462371
-5             ronhommelfotografie.nl             1    0.584028
-6                correiopaulista.com             1    0.496955
-7                       sistemhr.com             1    0.591904
-8                     crisisomar.net             1    0.475834
-9                org-nr.yolasite.com             1    0.552236
-10               help-0024511457.xyz             1    0.488397
-11  review01-supportapple.xyxxon.com             1    0.455973
-12         nuevoamanecercolombia.com             1    0.557255
-13                    amezglobal.com             1    0.535588
-14           www.getmefranchise.info             1    0.504285
-
-Examples for FN Bin range: 0.59209585 - 0.7401177 , Num. Samples: 31
-                                       input  ground truth  prediction
-0                         www.secure.mwwi.pl             1    0.646337
-1                           skins-casino.com             1    0.617467
-2                       londonshortstays.com             1    0.641500
-3                        katherinegesell.com             1    0.654144
-4                      www.vindanamobile.com             1    0.717523
-5                      dynamicdesignsinc.net             1    0.707900
-6   w.invite-grub-whatsappsex-chat.2waky.com             1    0.662419
-7                           www.jetcraft.com             1    0.642037
-8                                   aurix.ro             1    0.668920
-9                     www.serviziappbank.com             1    0.685895
-10                   dbs.rewardgateway.co.uk             1    0.719831
-11                              alumdecor.ru             1    0.676338
-12                                    hap.io             1    0.638569
-13                      www.toancaupumps.com             1    0.727888
-14                         www.taxiample.com             1    0.684279
-
-Examples for TP Bin range: 0.7569905 - 0.805591 , Num. Samples: 27
-                           input  ground truth  prediction
-0                  ukdvlatax.com             1    0.800841
-1                      satkom.id             1    0.756990
-2                   welasyia.com             1    0.786966
-3                      satkom.id             1    0.756990
-4                  turkstore.net             1    0.780650
-5               aurickhotels.com             1    0.774534
-6   bayanicgiyimsitesi.somee.com             1    0.764003
-7         uofc-my.sharepoint.com             1    0.774488
-8             lavienailscorp.com             1    0.802538
-9                      aflbd.net             1    0.797983
-10             deviceattempt.com             1    0.775647
-11               zeebracross.com             1    0.796079
-12          backyarddelivery.com             1    0.779522
-13         www.alqurancampus.com             1    0.760257
-14             stephaneledro.com             1    0.772025
-
-Examples for TP Bin range: 0.805591 - 0.8541914 , Num. Samples: 33
-                                       input  ground truth  prediction
-0                                 paipale.ml             1    0.824391
-1                            rabosafetyy.xyz             1    0.840437
-2                      lu9-my.sharepoint.com             1    0.842121
-3                             baobulksms.com             1    0.853588
-4   .bancodebogota.com.co.aceitesymas.com.mx             1    0.816174
-5                                 suxury.com             1    0.830553
-6                           in-medias-res.it             1    0.817654
-7                             ajaxfrance.com             1    0.811190
-8                                   ehan.org             1    0.845986
-9                    www.ktplasmachinery.com             1    0.810302
-10                 timetravel.mementoweb.org             1    0.842011
-11                   congressoagrotec.com.br             1    0.825719
-12  fspsv7.k9l7d5k8uutps498.rebelyell.agency             1    0.841047
-13                         ellasuniforms.com             1    0.841626
-14                                  kjsa.com             1    0.853723
-
-Examples for TP Bin range: 0.8541914 - 0.9027919 , Num. Samples: 45
-                                       input  ground truth  prediction
-0                        www.mokshshanti.com             1    0.874623
-1                                 meetme.run             1    0.863964
-2                                vhmrics.com             1    0.865939
-3                              mybill-o2.com             1    0.862201
-4                               mulnored.com             1    0.873008
-5   NvbQ==Memberservices&amp;legalshieldcorp             1    0.858713
-6                                 jagex.club             1    0.864284
-7                        www.lovetheedit.com             1    0.875986
-8   983499-secondary.z6.web.core.windows.net             1    0.863342
-9                              hisyo.main.jp             1    0.867997
-10  jonkwowa.fra1.cdn.digitaloceanspaces.com             1    0.863365
-11                            squamfreup.com             1    0.896652
-12                              nartsokb.com             1    0.899637
-13                          isabellacano.com             1    0.858607
-14                        updatefbsecure.com             1    0.895199
-
-Examples for TP Bin range: 0.9027919 - 0.95139235 , Num. Samples: 90
-                             input  ground truth  prediction
-0                           lmy.de             1    0.932130
-1               cancelnewdevice.cc             1    0.951213
-2        pendingreview-account.com             1    0.949510
-3                     ctamedia.net             1    0.924627
-4                rekvtanm-eoivf.cc             1    0.940937
-5          luckyspin20.pubgm.co.in             1    0.906129
-6                    nirmalind.com             1    0.950144
-7                   www.nabacc.com             1    0.923543
-8   umconnectumt-my.sharepoint.com             1    0.936156
-9                urbanmeisters.ovh             1    0.947217
-10          joinngrubwa.itsaol.com             1    0.947602
-11                 patchcracks.com             1    0.944506
-12               o2-my-account.com             1    0.944245
-13                    sentraco.com             1    0.934767
-14                     jmcnoack.cl             1    0.914810
-
-Examples for TP Bin range: 0.95139235 - 0.99999285 , Num. Samples: 2739
-                                       input  ground truth  prediction
-0                   www.vadodaramarathon.com             1    0.997816
-1            halifax-deviceauthenticator.com             1    0.999815
-2                              52e4t.csb.app             1    0.999971
-3                          aomuabinhtien.com             1    0.991657
-4                                    i-ta.cc             1    0.999882
-5          fistgradekhjwdmjhfemfe.weebly.com             1    0.999985
-6           halifax.fraudalerts-payments.com             1    0.999990
-7           www.lloyds.fraudpaymentalert.com             1    0.998945
-8                       lnk.pmlti-etai-2.ovh             1    0.994699
-9    onlineyahoo-vericationcenter.weebly.com             1    0.999982
-10                     cirodentalperu.online             1    0.999927
-11                        firmaadicional.com             1    0.997154
-12                              garionac.com             1    0.967664
-13                    ladycavendishdiary.com             1    0.974894
-14  rket-place-item-723465123.achsnmlion.win             1    0.989723
+0   u-dot-cedar-code-289917.nn.r.appspot.com             1    0.999989
+1             netflix.error-with-billing.com             1    0.999882
+2                         psych-k-online.com             1    0.999736
+3                                pubg-as.com             1    0.915831
+4                    unknowninfo-online.link             1    0.998208
+5                 www.academiafleming.com.pe             1    0.984846
+6                llojas-americanas.ezyro.com             1    0.999285
+7               windowinstallationtoronto.ca             1    0.994219
+8   leappsecurehalifacxappsecure.wikiamuz.ir             1    0.999947
+9                  raokuten.co.jp.amozj.buzz             1    0.999732
+10                     truenorthstrength.com             1    0.947873
+11              services.runescape.com-zx.ru             1    0.999986
+12                   www.bp-atualiza-app.com             1    0.997780
+13                 fbcom-32601355.chekkos.mx             1    0.999840
+14                                 hatac.net             1    0.994230
 
 Phishing ULR examples:
-Prediction on url: frgcxtmjawefgrthdcusge.dab 0.9682055
-Prediction on url: evilmadeupurl.phish 0.929837
-Prediction on url: evil.madeupurl.phish 0.0158896
+Prediction on url: frgcxtmjawefgrthdcusge.dab 0.0037203317
+Prediction on url: evilmadeupurl.phish 0.633814
+Prediction on url: evil.madeupurl.phish 0.00034718902
 
 Safe URL examples:
-Prediction on url: google.com 0.00012256467
-Prediction on url: www.google.com 0.00025575052
-Prediction on url: gmail.google.com 8.538672e-06
-Prediction on url: mail.google.com 8.285025e-06
-Prediction on url: tudelft.nl 0.00022523031
-Prediction on url: brightspace.tudelft.nl 0.9749136
-Prediction on url: colab.research.google.com 7.819281e-06
-Prediction on url: 00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr 3.510749e-05
+Prediction on url: google.com 0.4695877
+Prediction on url: www.google.com 0.23997158
+Prediction on url: gmail.google.com 6.3069674e-05
+Prediction on url: mail.google.com 0.00013527935
+Prediction on url: tudelft.nl 0.031315554
+Prediction on url: brightspace.tudelft.nl 0.9944102
+Prediction on url: colab.research.google.com 0.0001981094
+Prediction on url: 00-gayrettepe-t3-8---00-gayrettepe-xrs-t2-1.statik.turktelekom.com.tr 0.0064572464
 ```
