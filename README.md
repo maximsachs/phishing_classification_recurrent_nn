@@ -13,19 +13,12 @@ Run the dataset_downloader.py to download one new sample from phishtank and merg
 ### Accuracy vs decision threshold:
 The neural network outputs values between 0 and 1. The threshold where the decision is made determines the various detection rates.
 
-<object data="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf">
-        <p>The detection rates for various thresholds: <a href="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+[![](https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.png)](https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/threshold_statistics_sweep.pdf "")
 
 ### Sample prediction distribution for the best threshold:
+The distribution of samples with their prediction outputs visualised to see TN, FP, FN and TP:
 
-<object data="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/outcome_distributions.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/outcome_distributions.pdf">
-        <p>The distribution of samples with their prediction outputs visualised to see TN, FP, FN and TP: <a href="https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/outcome_distributions.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+[![](https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/outcome_distributions.png)](https://github.com/maximsachs/phishing_classification_recurrent_nn/raw/master/outcome_distributions.pdf "")
 
 ### Example output
 
